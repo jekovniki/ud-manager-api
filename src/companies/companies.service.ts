@@ -9,8 +9,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 export class CompaniesService {
 	constructor(
 		@InjectRepository(Company)
-		private readonly entityManager: EntityManager,
 		private readonly companiesRepository: Repository<Company>,
+		private readonly entityManager: EntityManager,
 	) {}
 
 	async create(createCompanyDto: CreateCompanyDto) {
