@@ -11,23 +11,38 @@ import { CompaniesService } from "./companies.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 
-@Controller("companies")
+@Controller({
+	path: "companies",
+	version: "1",
+})
 export class CompaniesController {
 	constructor(private readonly companiesService: CompaniesService) {}
 
 	@Post()
 	async create(@Body() createCompanyDto: CreateCompanyDto) {
-		return this.companiesService.create(createCompanyDto);
+		try {
+			return this.companiesService.create(createCompanyDto);
+		} catch (error) {
+			return null;
+		}
 	}
 
 	@Get()
 	async findAll() {
-		return this.companiesService.findAll();
+		try {
+			return this.companiesService.findAll();
+		} catch (error) {
+			return null;
+		}
 	}
 
 	@Get(":id")
 	async findOne(@Param("id") id: string) {
-		return this.companiesService.findOne(id);
+		try {
+			return this.companiesService.findOne(id);
+		} catch (error) {
+			return null;
+		}
 	}
 
 	@Patch(":id")
@@ -35,11 +50,19 @@ export class CompaniesController {
 		@Param("id") id: string,
 		@Body() updateCompanyDto: UpdateCompanyDto,
 	) {
-		return this.companiesService.update(id, updateCompanyDto);
+		try {
+			return this.companiesService.update(id, updateCompanyDto);
+		} catch (error) {
+			return null;
+		}
 	}
 
 	@Delete(":id")
 	async remove(@Param("id") id: string) {
-		return this.companiesService.remove(id);
+		try {
+			return this.companiesService.remove(id);
+		} catch (error) {
+			return null;
+		}
 	}
 }

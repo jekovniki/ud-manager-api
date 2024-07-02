@@ -5,10 +5,10 @@ export class Company {
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
 
-	@Column()
+	@Column({ unique: true })
 	name: string;
 
-	@Column()
+	@Column({ unique: true })
 	uic: string;
 
 	@Column()
