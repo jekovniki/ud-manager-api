@@ -36,4 +36,6 @@ export class CompaniesService {
 	async remove(id: string) {
 		await this.companiesRepository.delete(id);
 	}
+
+	async uploadFile(file) {}
 }

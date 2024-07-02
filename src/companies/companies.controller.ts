@@ -65,4 +65,13 @@ export class CompaniesController {
 			return null;
 		}
 	}
+
+	@Post(":id/logo")
+	async createLogo() {
+		try {
+			return true;
+		} catch (error) {
+			return null;
+		}
+	}
 }
