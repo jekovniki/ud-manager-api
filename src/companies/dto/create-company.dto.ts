@@ -12,4 +12,6 @@ export class CreateCompanyDto {
 		required: true,
 	})
 	uic: string;
+
+	employees: Array<{ email: string; roleId: number }>;
 }
