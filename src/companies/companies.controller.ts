@@ -11,6 +11,7 @@ import { CompaniesService } from "./companies.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { UsersService } from "src/users/users.service";
 
 @ApiTags("Companies")
 @Controller({
@@ -18,12 +19,25 @@ import { ApiTags } from "@nestjs/swagger";
 	version: "1",
 })
 export class CompaniesController {
-	constructor(private readonly companiesService: CompaniesService) {}
+	constructor(
+		private readonly companiesService: CompaniesService,
+		private readonly userService: UsersService,
+	) {}
 
 	@Post()
 	async create(@Body() createCompanyDto: CreateCompanyDto) {
 		try {
-			return this.companiesService.create(createCompanyDto);
+			const company = await this.companiesService.create(createCompanyDto);
+			const user = await this.userService.create({
+				company_id: company.id,
+				email: "sd",
+				role_id: 1,
+			});
+
+			return {
+				company,
+				user,
+			};
 		} catch (error) {
 			return null;
 		}

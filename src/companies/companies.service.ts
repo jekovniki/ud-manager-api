@@ -15,7 +15,7 @@ export class CompaniesService {
 
 	async create(createCompanyDto: CreateCompanyDto) {
 		const company = new Company(createCompanyDto);
-		await this.entityManager.save(company);
+		return this.entityManager.save(company);
 	}
 
 	async findAll() {

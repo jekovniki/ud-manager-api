@@ -15,6 +15,12 @@ export class Company {
 	logo: string;
 
 	@Column({
+		type: "boolean",
+		default: true,
+	})
+	active: boolean;
+
+	@Column({
 		type: "timestamptz",
 		default: new Date(),
 	})
