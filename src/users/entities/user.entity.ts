@@ -32,10 +32,7 @@ export class User {
 
 	@OneToOne(() => Company, { cascade: true })
 	@JoinColumn()
-	company: string;
-
-	// @OneToOne()
-	// role: string;
+	company: Company;
 
 	@Column({
 		type: "timestamptz",
