@@ -1,4 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { IsArray, IsEmail, IsPositive, ValidateNested } from "class-validator";
+
+export class CreateCompanyEmployeesDto {
+	@ApiProperty({ example: "user@example.com", required: true })
+	@IsEmail()
+	email: string;
+
+	@ApiProperty({ example: 1, required: true })
+	@IsPositive()
+	roleId: number;
+}
 
 export class CreateCompanyDto {
 	@ApiProperty({
@@ -13,5 +25,9 @@ export class CreateCompanyDto {
 	})
 	uic: string;
 
-	employees: Array<{ email: string; roleId: number }>;
+	@ApiProperty({ type: [CreateCompanyEmployeesDto] })
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => CreateCompanyEmployeesDto)
+	employees: CreateCompanyEmployeesDto[];
 }

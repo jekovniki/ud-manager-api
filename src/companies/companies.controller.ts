@@ -27,26 +27,7 @@ export class CompaniesController {
 	@Post()
 	async create(@Body() createCompanyDto: CreateCompanyDto) {
 		try {
-			const company = await this.companiesService.create(createCompanyDto);
-			const user = await this.userService.create({
-				company_id: company.id,
-				email: "sd",
-				role_id: 1,
-			});
-
-			return {
-				company,
-				user,
-			};
-		} catch (error) {
-			return null;
-		}
-	}
-
-	@Get()
-	async findAll() {
-		try {
-			return this.companiesService.findAll();
+			return this.companiesService.create(createCompanyDto);
 		} catch (error) {
 			return null;
 		}
@@ -68,15 +49,6 @@ export class CompaniesController {
 	) {
 		try {
 			return this.companiesService.update(id, updateCompanyDto);
-		} catch (error) {
-			return null;
-		}
-	}
-
-	@Delete(":id")
-	async remove(@Param("id") id: string) {
-		try {
-			return this.companiesService.remove(id);
 		} catch (error) {
 			return null;
 		}

@@ -8,7 +8,7 @@ export class Roles {
 	@Column({ unique: true })
 	name: string;
 
-	constructor(permission: Partial<Roles>) {
-		Object.assign(this, permission);
+	constructor(roles: Partial<Roles>) {
+		Object.assign(this, roles);
 	}
 }

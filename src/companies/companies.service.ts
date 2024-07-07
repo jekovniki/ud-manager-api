@@ -1,21 +1,79 @@
 import { Injectable } from "@nestjs/common";
-import { CreateCompanyDto } from "./dto/create-company.dto";
+import {
+	CreateCompanyDto,
+	CreateCompanyEmployeesDto,
+} from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { EntityManager, Repository } from "typeorm";
 import { Company } from "./entities/company.entity";
 import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/users/entities/user.entity";
+import { Roles } from "src/core/roles/entities/roles.entity";
 
 @Injectable()
 export class CompaniesService {
 	constructor(
 		@InjectRepository(Company)
 		private readonly companiesRepository: Repository<Company>,
+		@InjectRepository(User)
+		@InjectRepository(Roles)
+		private readonly rolesRepository: Repository<Roles>,
 		private readonly entityManager: EntityManager,
 	) {}
 
-	async create(createCompanyDto: CreateCompanyDto) {
-		const company = new Company(createCompanyDto);
-		return this.entityManager.save(company);
+	async create(
+		createCompanyDto: CreateCompanyDto,
+	): Promise<{ company: Company; employees: string[] }> {
+		const { name, uic, employees } = createCompanyDto;
+
+		return await this.entityManager.transaction(
+			async (transactionalEntityManager) => {
+				const company = await transactionalEntityManager.save(
+					new Company({ name, uic, logo: "" }),
+				);
+
+				await Promise.all(
+					employees.map((employee) =>
+						this.assignEmployeeToCompany(
+							transactionalEntityManager,
+							employee,
+							company,
+						),
+					),
+				);
+
+				return {
+					company,
+					employees: employees.map((employee) => employee.email),
+				};
+			},
+		);
+	}
+
+	private async assignEmployeeToCompany(
+		transactionalEntityManager: EntityManager,
+		employee: CreateCompanyEmployeesDto,
+		company: Company,
+	): Promise<void> {
+		const role = await this.rolesRepository.findOne({
+			where: { id: employee.roleId },
+		});
+		if (!role) {
+			throw new Error(`Role with ID ${employee.roleId} not found`);
+		}
+
+		await transactionalEntityManager.save(
+			new User({
+				email: employee.email,
+				password: "",
+				firstName: "",
+				lastName: "",
+				role: role,
+				position: "",
+				refresh_token: "",
+				company: company,
+			}),
+		);
 	}
 
 	async findAll() {

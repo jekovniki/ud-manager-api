@@ -1,8 +1,10 @@
 import { Company } from "src/companies/entities/company.entity";
+import { Roles } from "src/core/roles/entities/roles.entity";
 import {
 	Column,
 	Entity,
 	JoinColumn,
+	ManyToOne,
 	OneToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
@@ -30,8 +32,12 @@ export class User {
 	@Column()
 	refresh_token: string;
 
-	@OneToOne(() => Company, { cascade: true })
-	@JoinColumn()
+	@ManyToOne(() => Roles, { cascade: true })
+	@JoinColumn({ name: "roleId" })
+	role: Roles;
+
+	@ManyToOne(() => Company)
+	@JoinColumn({ name: "companyId" })
 	company: Company;
 
 	@Column({
