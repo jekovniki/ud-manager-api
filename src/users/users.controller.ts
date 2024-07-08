@@ -6,9 +6,10 @@ import {
 	Patch,
 	Param,
 	Delete,
+	Put,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { CompleteUserRegistration, CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -20,6 +21,18 @@ export class UsersController {
 	@Get()
 	findAll() {
 		return this.usersService.findAll();
+	}
+
+	@Put(":id")
+	completeUser(
+		@Param("id") id: string,
+		userRegistration: CompleteUserRegistration,
+	) {
+		try {
+			return this.usersService.completeRegistration(id, userRegistration);
+		} catch (error) {
+			return null;
+		}
 	}
 
 	@Get(":id")

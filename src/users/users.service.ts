@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { CompleteUserRegistration, CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
@@ -13,11 +13,14 @@ export class UsersService {
 	) {}
 
 	public async create(createUserDto: CreateUserDto) {
-		console.log("create : ", createUserDto);
 		const user = new User(createUserDto);
-		console.log("user : ", user);
 		return this.entityManager.save(user);
 	}
+
+	public async completeRegistration(
+		id: string,
+		user: CompleteUserRegistration,
+	) {}
 
 	public findAll() {
 		return `This action returns all users`;
