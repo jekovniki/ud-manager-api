@@ -15,7 +15,6 @@ export class CompaniesService {
 	constructor(
 		@InjectRepository(Company)
 		private readonly companiesRepository: Repository<Company>,
-		@InjectRepository(User)
 		@InjectRepository(Roles)
 		private readonly rolesRepository: Repository<Roles>,
 		private readonly entityManager: EntityManager,
@@ -55,6 +54,7 @@ export class CompaniesService {
 		employee: CreateCompanyEmployeesDto,
 		company: Company,
 	): Promise<void> {
+		console.log("roleID : ", employee.roleId);
 		const role = await this.rolesRepository.findOne({
 			where: { id: employee.roleId },
 		});

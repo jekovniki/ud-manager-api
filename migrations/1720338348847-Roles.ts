@@ -7,9 +7,9 @@ export class Roles1720338348847 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		this.logger.log("UP - START");
 		await queryRunner.query(
-			`INSERT INTO roles (name) VALUES ('Administrator')`,
+			`INSERT INTO roles (name) VALUES ('Administrator');`,
 		);
-		await queryRunner.query(`INSERT INTO roles (name) VALUES ('Employee')`);
+		await queryRunner.query(`INSERT INTO roles (name) VALUES ('Employee');`);
 		this.logger.log("UP - COMPLETED");
 	}
 

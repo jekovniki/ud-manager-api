@@ -15,4 +15,5 @@ export default new DataSource({
 	password: configService.getOrThrow("DATABASE_PASSWORD"),
 	entities: ["./src/**/*.entity{.ts,.js}", "./src/**/**/*.entity{.ts,.js}"],
 	migrations: ["migrations/**"],
+	logging: true,
 });

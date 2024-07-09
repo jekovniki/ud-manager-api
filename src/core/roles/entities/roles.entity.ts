@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Roles {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn("increment")
 	id: number;
 
 	@Column({ unique: true })
