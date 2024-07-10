@@ -1,8 +1,8 @@
 import { Logger } from "@nestjs/common";
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Roles1720338348847 implements MigrationInterface {
-	private readonly logger = new Logger(Roles1720338348847.name);
+export class Roles1720600019083 implements MigrationInterface {
+	private readonly logger = new Logger(Roles1720600019083.name);
 
 	public async up(queryRunner: QueryRunner): Promise<void> {
 		this.logger.log("UP - START");
