@@ -1,17 +1,9 @@
-import {
-	Controller,
-	Get,
-	Post,
-	Body,
-	Patch,
-	Param,
-	Delete,
-} from "@nestjs/common";
+import { Controller, Get, Post, Body, Patch, Param } from "@nestjs/common";
 import { CompaniesService } from "./companies.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { UsersService } from "src/users/users.service";
+import { UsersService } from "src/features/users/users.service";
 
 @ApiTags("Companies")
 @Controller({

@@ -1,7 +1,6 @@
 import {
 	Controller,
 	Get,
-	Post,
 	Body,
 	Patch,
 	Param,
@@ -9,7 +8,7 @@ import {
 	Put,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { CompleteUserRegistration, CreateUserDto } from "./dto/create-user.dto";
+import { CompleteUserRegistration } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiTags } from "@nestjs/swagger";
 

@@ -7,8 +7,8 @@ import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { EntityManager, Repository } from "typeorm";
 import { Company } from "./entities/company.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/users/entities/user.entity";
-import { Roles } from "src/core/roles/entities/roles.entity";
+import { User } from "src/features/users/entities/user.entity";
+import { Roles } from "src/features/roles/entities/roles.entity";
 
 @Injectable()
 export class CompaniesService {
@@ -94,6 +94,4 @@ export class CompaniesService {
 	async remove(id: string) {
 		await this.companiesRepository.delete(id);
 	}
-
-	async uploadFile(file) {}
 }

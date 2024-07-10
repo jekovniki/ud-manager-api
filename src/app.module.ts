@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { CompaniesModule } from "./companies/companies.module";
-import { AuthModule } from "./auth/auth.module";
-import { UsersModule } from "./users/users.module";
-import { CommonModule } from "./common/common.module";
-import { CoreModule } from './core/core.module';
+import { CompaniesModule } from "./features/companies/companies.module";
+import { AuthModule } from "./features/auth/auth.module";
+import { UsersModule } from "./features/users/users.module";
+import { ConfigurationModule } from "./configuration/configuration.module";
+import { PermissionsModule } from "./features/permissions/permissions.module";
+import { RolesModule } from "./features/roles/roles.module";
 
 @Module({
 	imports: [
@@ -14,8 +15,9 @@ import { CoreModule } from './core/core.module';
 		CompaniesModule,
 		AuthModule,
 		UsersModule,
-		CommonModule,
-		CoreModule,
+		ConfigurationModule,
+		PermissionsModule,
+		RolesModule,
 	],
 })
 export class AppModule {}

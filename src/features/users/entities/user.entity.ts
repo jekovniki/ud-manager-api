@@ -1,11 +1,10 @@
-import { Company } from "src/companies/entities/company.entity";
-import { Roles } from "src/core/roles/entities/roles.entity";
+import { Company } from "src/features/companies/entities/company.entity";
+import { Roles } from "src/features/roles/entities/roles.entity";
 import {
 	Column,
 	Entity,
 	JoinColumn,
 	ManyToOne,
-	OneToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
