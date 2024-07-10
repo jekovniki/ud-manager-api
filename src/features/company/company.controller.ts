@@ -3,7 +3,7 @@ import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { ApiTags } from "@nestjs/swagger";
-import { UsersService } from "src/features/users/users.service";
+import { UserService } from "src/features/user/user.service";
 
 @ApiTags("Companies")
 @Controller({
@@ -13,7 +13,7 @@ import { UsersService } from "src/features/users/users.service";
 export class CompanyController {
 	constructor(
 		private readonly companiesService: CompanyService,
-		private readonly userService: UsersService,
+		private readonly userService: UserService,
 	) {}
 
 	@Post()

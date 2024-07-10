@@ -3,18 +3,18 @@ import { CompanyService } from "./company.service";
 import { CompanyController } from "./company.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Company } from "./entities/company.entity";
-import { UsersService } from "src/features/users/users.service";
-import { User } from "src/features/users/entities/user.entity";
-import { Roles } from "src/features/roles/entities/roles.entity";
-import { RolesService } from "src/features/roles/roles.service";
+import { UserService } from "src/features/user/user.service";
+import { User } from "src/features/user/entities/user.entity";
+import { Role } from "src/features/role/entities/role.entity";
+import { RoleService } from "src/features/role/role.service";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Company]),
 		TypeOrmModule.forFeature([User]),
-		TypeOrmModule.forFeature([Roles]),
+		TypeOrmModule.forFeature([Role]),
 	],
 	controllers: [CompanyController],
-	providers: [CompanyService, UsersService, RolesService],
+	providers: [CompanyService, UserService, RoleService],
 })
 export class CompanyModule {}

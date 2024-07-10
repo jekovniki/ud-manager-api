@@ -1,5 +1,5 @@
 import { Company } from "src/features/company/entities/company.entity";
-import { Roles } from "src/features/roles/entities/roles.entity";
+import { Role } from "src/features/role/entities/role.entity";
 import {
 	Column,
 	Entity,
@@ -31,9 +31,9 @@ export class User {
 	@Column()
 	refresh_token: string;
 
-	@ManyToOne(() => Roles, { cascade: true })
+	@ManyToOne(() => Role, { cascade: true })
 	@JoinColumn({ name: "roleId" })
-	role: Roles;
+	role: Role;
 
 	@ManyToOne(() => Company)
 	@JoinColumn({ name: "companyId" })

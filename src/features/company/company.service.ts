@@ -7,16 +7,16 @@ import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { EntityManager, Repository } from "typeorm";
 import { Company } from "./entities/company.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/features/users/entities/user.entity";
-import { Roles } from "src/features/roles/entities/roles.entity";
+import { User } from "src/features/user/entities/user.entity";
+import { Role } from "src/features/role/entities/role.entity";
 
 @Injectable()
 export class CompanyService {
 	constructor(
 		@InjectRepository(Company)
 		private readonly companiesRepository: Repository<Company>,
-		@InjectRepository(Roles)
-		private readonly rolesRepository: Repository<Roles>,
+		@InjectRepository(Role)
+		private readonly rolesRepository: Repository<Role>,
 		private readonly entityManager: EntityManager,
 	) {}
 
