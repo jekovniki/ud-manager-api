@@ -1,4 +1,4 @@
-import { Company } from "src/features/companies/entities/company.entity";
+import { Company } from "src/features/company/entities/company.entity";
 import { Roles } from "src/features/roles/entities/roles.entity";
 import {
 	Column,

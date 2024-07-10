@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param } from "@nestjs/common";
-import { CompaniesService } from "./companies.service";
+import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { ApiTags } from "@nestjs/swagger";
@@ -10,9 +10,9 @@ import { UsersService } from "src/features/users/users.service";
 	path: "companies",
 	version: "1",
 })
-export class CompaniesController {
+export class CompanyController {
 	constructor(
-		private readonly companiesService: CompaniesService,
+		private readonly companiesService: CompanyService,
 		private readonly userService: UsersService,
 	) {}
 

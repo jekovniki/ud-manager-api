@@ -11,7 +11,7 @@ import { User } from "src/features/users/entities/user.entity";
 import { Roles } from "src/features/roles/entities/roles.entity";
 
 @Injectable()
-export class CompaniesService {
+export class CompanyService {
 	constructor(
 		@InjectRepository(Company)
 		private readonly companiesRepository: Repository<Company>,
