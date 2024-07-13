@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import {
 	CreateCompanyDto,
 	CreateCompanyEmployeesDto,
@@ -9,12 +9,15 @@ import { Company } from "./entities/company.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/features/user/entities/user.entity";
 import { Role } from "src/features/role/entities/role.entity";
+import { BadRequestError } from "@uploadthing/shared";
+import { FileManagerService } from "src/configuration/file-manager/file-manager.service";
 
 @Injectable()
 export class CompanyService {
 	constructor(
+		private readonly fileManagerService: FileManagerService,
 		@InjectRepository(Company)
-		private readonly companiesRepository: Repository<Company>,
+		private readonly companyRepository: Repository<Company>,
 		@InjectRepository(Role)
 		private readonly rolesRepository: Repository<Role>,
 		private readonly entityManager: EntityManager,
@@ -77,21 +80,42 @@ export class CompanyService {
 	}
 
 	async findAll() {
-		return this.companiesRepository.find();
+		return this.companyRepository.find();
 	}
 
 	async findOne(id: string) {
-		return this.companiesRepository.findOneBy({ id });
+		return this.companyRepository.findOneBy({ id });
 	}
 
 	async update(id: string, updateCompanyDto: UpdateCompanyDto) {
-		const company = await this.companiesRepository.findOneBy({ id });
+		const company = await this.companyRepository.findOneBy({ id });
 		company.name = updateCompanyDto.name;
 		await this.entityManager.save(company);
 		return `This action updates a #${id} company`;
 	}
 
 	async remove(id: string) {
-		await this.companiesRepository.delete(id);
+		await this.companyRepository.delete(id);
+	}
+
+	async saveLogo(id: string, logo: Express.Multer.File) {
+		const company = await this.companyRepository.findOne({ where: { id } });
+		if (!company) {
+			throw new BadRequestException("Company not found!");
+		}
+
+		const uploadResult = await this.fileManagerService.uploadCompanyLogo(logo, {
+			companyId: id,
+			companyName: company.name,
+		});
+
+		if (!uploadResult.success) {
+			throw new Error("Failed to upload logo");
+		}
+
+		company.logo = uploadResult.fileUrl;
+		await this.companyRepository.save(company);
+
+		return { logo: company.logo };
 	}
 }

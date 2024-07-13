@@ -6,11 +6,13 @@ import {
 	Patch,
 	Param,
 	UseInterceptors,
+	UploadedFile,
+	BadRequestException,
 } from "@nestjs/common";
 import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { UserService } from "src/features/user/user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 
@@ -58,9 +60,26 @@ export class CompanyController {
 	@Post(":id/logo")
 	@UseInterceptors(FileInterceptor("logo"))
 	@ApiConsumes("multipart/form-data")
-	async createLogo() {
+	@ApiBody({
+		schema: {
+			type: "object",
+			properties: {
+				logo: {
+					type: "string",
+					format: "binary",
+				},
+			},
+		},
+	})
+	async createLogo(
+		@Param("id") id: string,
+		@UploadedFile() logo: Express.Multer.File,
+	) {
 		try {
-			return true;
+			if (!logo) {
+				throw new BadRequestException("Logo file is required");
+			}
+			return this.companiesService.saveLogo(id, logo);
 		} catch (error) {
 			return null;
 		}
