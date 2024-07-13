@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param } from "@nestjs/common";
+import {
+	Controller,
+	Get,
+	Post,
+	Body,
+	Patch,
+	Param,
+	UseInterceptors,
+} from "@nestjs/common";
 import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { UserService } from "src/features/user/user.service";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @ApiTags("Companies")
 @Controller({
@@ -47,6 +56,8 @@ export class CompanyController {
 	}
 
 	@Post(":id/logo")
+	@UseInterceptors(FileInterceptor("logo"))
+	@ApiConsumes("multipart/form-data")
 	async createLogo() {
 		try {
 			return true;

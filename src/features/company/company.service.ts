@@ -54,10 +54,10 @@ export class CompanyService {
 		employee: CreateCompanyEmployeesDto,
 		company: Company,
 	): Promise<void> {
-		console.log("roleID : ", employee.roleId);
 		const role = await this.rolesRepository.findOne({
 			where: { id: employee.roleId },
 		});
+
 		if (!role) {
 			throw new Error(`Role with ID ${employee.roleId} not found`);
 		}
