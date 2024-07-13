@@ -6,14 +6,18 @@ import {
 	Param,
 	Delete,
 	Put,
+	Post,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CompleteUserRegistration } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("User")
-@Controller("users")
+@Controller({
+	path: "user",
+	version: "1",
+})
 export class UserController {
 	constructor(private readonly usersService: UserService) {}
 
@@ -22,10 +26,11 @@ export class UserController {
 		return this.usersService.findAll();
 	}
 
-	@Put(":id")
+	@Post(":id")
+	@ApiBody({ type: CompleteUserRegistration })
 	completeUser(
 		@Param("id") id: string,
-		userRegistration: CompleteUserRegistration,
+		@Body() userRegistration: CompleteUserRegistration,
 	) {
 		try {
 			return this.usersService.completeRegistration(id, userRegistration);
