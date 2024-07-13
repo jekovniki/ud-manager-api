@@ -6,11 +6,11 @@ import { EmailService } from "./email.service";
 	imports: [
 		MailerModule.forRoot({
 			transport: {
-				host: process.env.EMAIL_HOST || "smtp.gmail.com",
-				port: Number(process.env.EMAIL_PORT) || 587,
+				host: process.env.EMAIL_HOST,
+				port: Number(process.env.EMAIL_PORT),
 				auth: {
-					user: process.env.EMAIL_USERNAME || "jekovniki95@gmail.com",
-					pass: process.env.EMAIL_PASSWORD || "rush kdpf alot xgxb",
+					user: process.env.EMAIL_USERNAME,
+					pass: process.env.EMAIL_PASSWORD,
 				},
 			},
 		}),
