@@ -11,10 +11,12 @@ import { User } from "src/features/user/entities/user.entity";
 import { Role } from "src/features/role/entities/role.entity";
 import { BadRequestError } from "@uploadthing/shared";
 import { FileManagerService } from "src/configuration/file-manager/file-manager.service";
+import { EmailService } from "src/configuration/email/email.service";
 
 @Injectable()
 export class CompanyService {
 	constructor(
+		private readonly mailService: EmailService,
 		private readonly fileManagerService: FileManagerService,
 		@InjectRepository(Company)
 		private readonly companyRepository: Repository<Company>,
@@ -76,6 +78,12 @@ export class CompanyService {
 				refresh_token: "",
 				company: company,
 			}),
+		);
+
+		this.mailService.sendRegistrationMail(
+			employee.email,
+			company.name,
+			"test-link",
 		);
 	}
 

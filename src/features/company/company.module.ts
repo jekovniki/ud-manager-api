@@ -8,6 +8,7 @@ import { User } from "src/features/user/entities/user.entity";
 import { Role } from "src/features/role/entities/role.entity";
 import { RoleService } from "src/features/role/role.service";
 import { FileManagerService } from "src/configuration/file-manager/file-manager.service";
+import { EmailService } from "src/configuration/email/email.service";
 
 @Module({
 	imports: [
@@ -16,6 +17,12 @@ import { FileManagerService } from "src/configuration/file-manager/file-manager.
 		TypeOrmModule.forFeature([Role]),
 	],
 	controllers: [CompanyController],
-	providers: [CompanyService, UserService, RoleService, FileManagerService],
+	providers: [
+		CompanyService,
+		UserService,
+		RoleService,
+		FileManagerService,
+		EmailService,
+	],
 })
 export class CompanyModule {}
