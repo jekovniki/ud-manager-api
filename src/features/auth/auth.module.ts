@@ -9,7 +9,10 @@ import { LocalStrategy } from "./local.stategy";
 
 @Module({
 	controllers: [AuthController],
-	imports: [TypeOrmModule.forFeature([User]), PassportModule],
+	imports: [
+		TypeOrmModule.forFeature([User]),
+		PassportModule.register({ defaultStrategy: "local" }),
+	],
 	providers: [AuthService, UserService, LocalStrategy],
 })
 export class AuthModule {}

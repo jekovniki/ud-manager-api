@@ -9,7 +9,6 @@ import {
 	Post,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CompleteUserRegistration } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 
@@ -24,19 +23,6 @@ export class UserController {
 	@Get()
 	findAll() {
 		return this.usersService.findAll();
-	}
-
-	@Post(":id")
-	@ApiBody({ type: CompleteUserRegistration })
-	completeUser(
-		@Param("id") id: string,
-		@Body() userRegistration: CompleteUserRegistration,
-	) {
-		try {
-			return this.usersService.completeRegistration(id, userRegistration);
-		} catch (error) {
-			return null;
-		}
 	}
 
 	@Get(":id")
