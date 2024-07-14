@@ -11,10 +11,12 @@ import { Role } from "src/features/role/entities/role.entity";
 import { FileManagerService } from "src/configuration/file-manager/file-manager.service";
 import { EmailService } from "src/configuration/email/email.service";
 import { UserService } from "../user/user.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class CompanyService {
 	constructor(
+		private readonly configService: ConfigService,
 		private readonly mailService: EmailService,
 		private readonly fileManagerService: FileManagerService,
 		@InjectRepository(Company)
@@ -77,7 +79,7 @@ export class CompanyService {
 		this.mailService.sendRegistrationMail(
 			employee.email,
 			company.name,
-			`Here is jwt: ${result.registrationToken}`,
+			`${this.configService.getOrThrow("APP_URL")}/?rt=${result.registrationToken}`,
 		);
 	}
 
