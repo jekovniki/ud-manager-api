@@ -22,10 +22,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 	version: "1",
 })
 export class CompanyController {
-	constructor(
-		private readonly companiesService: CompanyService,
-		private readonly userService: UserService,
-	) {}
+	constructor(private readonly companiesService: CompanyService) {}
 
 	@Post()
 	async create(@Body() createCompanyDto: CreateCompanyDto) {

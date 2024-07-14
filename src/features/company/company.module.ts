@@ -9,12 +9,14 @@ import { Role } from "src/features/role/entities/role.entity";
 import { RoleService } from "src/features/role/role.service";
 import { FileManagerService } from "src/configuration/file-manager/file-manager.service";
 import { EmailService } from "src/configuration/email/email.service";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
 	imports: [
 		TypeOrmModule.forFeature([Company]),
 		TypeOrmModule.forFeature([User]),
 		TypeOrmModule.forFeature([Role]),
+		JwtModule.register({}),
 	],
 	controllers: [CompanyController],
 	providers: [

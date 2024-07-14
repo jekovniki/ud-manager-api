@@ -25,10 +25,13 @@ export class AuthController {
 	@Post("/:id/sign-up/local")
 	@ApiBody({ type: CompleteUserRegistration })
 	public async signUpLocal(
-		@Param("id") id: string,
+		@Param("id") companyId: string,
 		@Body() userRegistration: CompleteUserRegistration,
 	) {
-		return this.authService.completeUserRegistration(id, userRegistration);
+		return this.authService.completeUserRegistration(
+			companyId,
+			userRegistration,
+		);
 	}
 
 	@Post("/sign-in/local")

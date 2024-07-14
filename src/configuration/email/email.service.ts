@@ -8,12 +8,16 @@ export class EmailService {
 	constructor(private readonly mailService: MailerService) {}
 
 	public sendMail(to: string, subject: string, text: string, from: string) {
-		this.mailService.sendMail({
-			from,
-			to,
-			subject,
-			text,
-		});
+		try {
+			this.mailService.sendMail({
+				from,
+				to,
+				subject,
+				text,
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	public sendRegistrationMail(

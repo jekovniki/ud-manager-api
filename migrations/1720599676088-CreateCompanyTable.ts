@@ -38,12 +38,12 @@ export class CreateCompanyTable1720599676088 implements MigrationInterface {
 						default: true,
 					},
 					{
-						name: "createdAt",
+						name: "created_at",
 						type: "timestamptz",
 						default: "now()",
 					},
 					{
-						name: "updatedAt",
+						name: "updated_at",
 						type: "timestamptz",
 						default: "now()",
 					},
