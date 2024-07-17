@@ -82,6 +82,14 @@ export class UserService {
 		});
 	}
 
+	public findUserByToken(refreshToken: string): Promise<User> {
+		return this.userRepository.findOne({
+			where: {
+				refreshToken,
+			},
+		});
+	}
+
 	public async updateRefreshToken(userId: string, refreshToken: string) {
 		return this.userRepository.update(
 			{

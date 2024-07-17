@@ -22,16 +22,10 @@ import { dot } from "node:test/reporters";
 export class AuthController {
 	constructor(private authService: AuthService) {}
 
-	@Post("/:id/sign-up/local")
+	@Post("/sign-up/local")
 	@ApiBody({ type: CompleteUserRegistration })
-	public async signUpLocal(
-		@Param("id") companyId: string,
-		@Body() userRegistration: CompleteUserRegistration,
-	) {
-		return this.authService.completeUserRegistration(
-			companyId,
-			userRegistration,
-		);
+	public async signUpLocal(@Body() userRegistration: CompleteUserRegistration) {
+		return this.authService.completeUserRegistration(userRegistration);
 	}
 
 	@Post("/sign-in/local")

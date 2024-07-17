@@ -75,7 +75,7 @@ export class CompanyService {
 			role,
 			employee.email,
 		);
-		console.log("registration token: ", result.registrationToken);
+
 		this.mailService.sendRegistrationMail(
 			employee.email,
 			company.name,

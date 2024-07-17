@@ -23,6 +23,10 @@ export class CompleteUserRegistration extends AuthDto {
 	@IsNotEmpty()
 	userId: string;
 
+	@IsUUID()
+	@IsNotEmpty()
+	companyId: string;
+
 	@IsString()
 	@IsNotEmpty()
 	refreshToken: string;

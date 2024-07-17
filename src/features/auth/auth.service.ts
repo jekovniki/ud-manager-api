@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserService } from "../user/user.service";
 import * as bcrypt from "bcrypt";
 import { ConfigService } from "@nestjs/config";
@@ -17,12 +17,11 @@ export class AuthService {
 	public async refreshTokens() {}
 
 	public async completeUserRegistration(
-		companyId: string,
 		userRegistration: CompleteUserRegistration,
 	) {
 		await this.verifyRegistrationToken(
 			userRegistration.userId,
-			companyId,
+			userRegistration.companyId,
 			userRegistration.refreshToken,
 		);
 		const password = await this.hashData(userRegistration.password);
@@ -41,9 +40,21 @@ export class AuthService {
 		companyId: string,
 		registrationToken: string,
 	) {
-		const payload = await this.jwtService.verifyAsync(registrationToken);
+		const payload = await this.jwtService.verifyAsync(registrationToken, {
+			secret: this.configService.getOrThrow("REGISTRATION_TOKEN_SECRET"),
+		});
 
-		console.log("payload", payload);
+		if (payload.sub !== userId || payload.cid !== companyId) {
+			throw new BadRequestException("Използваният ключ не е за този профил");
+		}
+
+		const storedToken =
+			await this.userService.findUserByToken(registrationToken);
+		if (!storedToken) {
+			throw new BadRequestException("Потребителят вече е регистриран");
+		}
+
+		await this.userService.updateRefreshToken(userId, "");
 	}
 
 	public async getTokens(
