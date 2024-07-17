@@ -79,7 +79,7 @@ export class CompanyService {
 		this.mailService.sendRegistrationMail(
 			employee.email,
 			company.name,
-			`${this.configService.getOrThrow("APP_URL")}/?rt=${result.registrationToken}`,
+			`${this.configService.getOrThrow("APP_URL")}/?email=${employee.email}&userId=${result.id}&companyId=${result.company.id}&rt=${result.registrationToken}`,
 		);
 	}
 

@@ -8,6 +8,10 @@ import { ConfigService } from "@nestjs/config";
 import { Company } from "../company/entities/company.entity";
 import { Role } from "../role/entities/role.entity";
 
+interface CreateUserResponse extends User {
+	registrationToken: string;
+}
+
 @Injectable()
 export class UserService {
 	constructor(
@@ -23,7 +27,7 @@ export class UserService {
 		company: Company,
 		role: Role,
 		email: string,
-	): Promise<Record<string, any>> {
+	): Promise<CreateUserResponse> {
 		const user = await transactionalEntityManager.save(
 			new User({
 				email,
