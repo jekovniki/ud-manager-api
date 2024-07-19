@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./entities/user.entity";
 import { EntityManager, Repository } from "typeorm";
@@ -76,8 +76,52 @@ export class UserService {
 		id: string,
 		user: CompleteUserRegistration,
 	) {
-		console.log("id : ", id);
-		console.log("user : ", user);
+		this.userRepository.update(
+			{
+				id,
+			},
+			{
+				password: user.password,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				position: user.position,
+				updatedAt: new Date(),
+			},
+		);
+	}
+
+	public async findOneById(
+		id: string,
+	): Promise<Omit<User, "password" | "refreshToken">> {
+		const { password, refreshToken, ...user } =
+			await this.userRepository.findOne({
+				where: { id },
+				relations: ["role", "company"],
+			});
+
+		if (!user) {
+			throw new NotFoundException(`User with ID "${id}" not found`);
+		}
+
+		return user;
+	}
+
+	public async getAllCompanyUsers(
+		companyId: string,
+	): Promise<Omit<User, "password" | "refreshToken">[]> {
+		const users = await this.userRepository.find({
+			where: {
+				company: {
+					id: companyId,
+				},
+			},
+			relations: ["role", "company"],
+		});
+
+		return users.map((user) => {
+			const { password, refreshToken, ...userWithoutSensitiveInfo } = user;
+			return userWithoutSensitiveInfo;
+		});
 	}
 
 	public findOneByEmail(email: string): Promise<User> {
@@ -103,5 +147,11 @@ export class UserService {
 				refreshToken,
 			},
 		);
+	}
+
+	public async delete(id: string) {
+		return this.userRepository.delete({
+			id,
+		});
 	}
 }

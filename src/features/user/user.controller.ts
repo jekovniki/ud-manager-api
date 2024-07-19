@@ -11,6 +11,7 @@ import {
 import { UserService } from "./user.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
+import { DeleteResult } from "typeorm";
 
 @ApiTags("User")
 @Controller({
@@ -19,24 +20,31 @@ import { ApiBody, ApiTags } from "@nestjs/swagger";
 })
 export class UserController {
 	constructor(private readonly usersService: UserService) {}
-
 	// @Get()
 	// findAll() {
 	// 	return this.usersService.findAll();
 	// }
 
-	// @Get(":id")
-	// findOne(@Param("id") id: string) {
-	// 	return this.usersService.findOne(+id);
-	// }
+	/**
+	 * @TODO drop the id when jwt is implemented and make it with /me
+	 * @TODO add permissions
+	 */
+	@Get(":id")
+	findOne(@Param("id") id: string) {
+		return this.usersService.findOneById(id);
+	}
 
 	// @Patch(":id")
 	// update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
 	// 	return this.usersService.update(+id, updateUserDto);
 	// }
 
-	// @Delete(":id")
-	// remove(@Param("id") id: string) {
-	// 	return this.usersService.remove(+id);
-	// }
+	/**
+	 * @TODO : Add permissions
+	 */
+	@Delete(":id")
+	async remove(@Param("id") id: string): Promise<DeleteResult> {
+		await this.usersService.delete(id);
+		return;
+	}
 }

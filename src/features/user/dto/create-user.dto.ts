@@ -3,7 +3,7 @@ import { IsEmail, IsUUID, IsInt, IsNotEmpty } from "class-validator";
 export class CreateUserDto {
 	@IsUUID()
 	@IsNotEmpty()
-	company_id: string;
+	companyId: string;
 
 	@IsEmail()
 	@IsNotEmpty()
@@ -11,5 +11,5 @@ export class CreateUserDto {
 
 	@IsInt()
 	@IsNotEmpty()
-	role_id: number;
+	roleId: number;
 }
