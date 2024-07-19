@@ -25,10 +25,14 @@ export class UserController {
 	// 	return this.usersService.findAll();
 	// }
 
-	// @Get(":id")
-	// findOne(@Param("id") id: string) {
-	// 	return this.usersService.findOne(+id);
-	// }
+	/**
+	 * @TODO drop the id when jwt is implemented and make it with /me
+	 * @TODO add permissions
+	 */
+	@Get(":id")
+	findOne(@Param("id") id: string) {
+		return this.usersService.findOneById(id);
+	}
 
 	// @Patch(":id")
 	// update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
