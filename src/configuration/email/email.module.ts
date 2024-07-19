@@ -19,16 +19,7 @@ import { join } from "path";
 				from: '"АМС Мениджър" <noreply@amc-manager.com>',
 			},
 			template: {
-				dir: join(
-					__dirname,
-					"..",
-					"..",
-					"..",
-					"src",
-					"configuration",
-					"email",
-					"templates",
-				),
+				dir: join(process.cwd(), "templates"),
 				adapter: new HandlebarsAdapter(),
 				options: {
 					strict: true,
