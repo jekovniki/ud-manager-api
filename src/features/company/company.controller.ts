@@ -13,12 +13,12 @@ import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { UserService } from "src/features/user/user.service";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { CreateUserDto } from "../user/dto/create-user.dto";
 
-@ApiTags("Companies")
+@ApiTags("Company")
 @Controller({
-	path: "companies",
+	path: "company",
 	version: "1",
 })
 export class CompanyController {
@@ -31,6 +31,14 @@ export class CompanyController {
 		} catch (error) {
 			return null;
 		}
+	}
+
+	@Post("/user")
+	async addUser(@Body() createUserDto: CreateUserDto) {
+		return this.companiesService.addUserToCompany(
+			createUserDto.companyId,
+			createUserDto,
+		);
 	}
 
 	@Get(":id")

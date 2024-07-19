@@ -12,6 +12,7 @@ import { FileManagerService } from "src/configuration/file-manager/file-manager.
 import { EmailService } from "src/configuration/email/email.service";
 import { UserService } from "../user/user.service";
 import { ConfigService } from "@nestjs/config";
+import { CreateUserDto } from "../user/dto/create-user.dto";
 
 @Injectable()
 export class CompanyService {
@@ -56,6 +57,54 @@ export class CompanyService {
 		);
 	}
 
+	public async addUserToCompany(companyId: string, employee: CreateUserDto) {
+		return await this.entityManager.transaction(
+			async (transactionalEntityManager) => {
+				const company = await this.companyRepository.findOneBy({
+					id: companyId,
+				});
+
+				await this.assignEmployeeToCompany(
+					transactionalEntityManager,
+					employee,
+					company,
+				);
+			},
+		);
+	}
+
+	public async findOne(id: string) {
+		return this.companyRepository.findOneBy({ id });
+	}
+
+	public async update(id: string, updateCompanyDto: UpdateCompanyDto) {
+		const company = await this.companyRepository.findOneBy({ id });
+		company.name = updateCompanyDto.name;
+		await this.entityManager.save(company);
+		return;
+	}
+
+	public async saveLogo(id: string, logo: Express.Multer.File) {
+		const company = await this.companyRepository.findOne({ where: { id } });
+		if (!company) {
+			throw new BadRequestException("Company not found!");
+		}
+
+		const uploadResult = await this.fileManagerService.uploadCompanyLogo(logo, {
+			companyId: id,
+			companyName: company.name,
+		});
+
+		if (!uploadResult.success) {
+			throw new Error("Failed to upload logo");
+		}
+
+		company.logo = uploadResult.fileUrl;
+		await this.companyRepository.save(company);
+
+		return { logo: company.logo };
+	}
+
 	private async assignEmployeeToCompany(
 		transactionalEntityManager: EntityManager,
 		employee: CreateCompanyEmployeesDto,
@@ -81,45 +130,5 @@ export class CompanyService {
 			company.name,
 			`${this.configService.getOrThrow("APP_URL")}/?email=${employee.email}&userId=${result.id}&companyId=${result.company.id}&rt=${result.registrationToken}`,
 		);
-	}
-
-	async findAll() {
-		return this.companyRepository.find();
-	}
-
-	async findOne(id: string) {
-		return this.companyRepository.findOneBy({ id });
-	}
-
-	async update(id: string, updateCompanyDto: UpdateCompanyDto) {
-		const company = await this.companyRepository.findOneBy({ id });
-		company.name = updateCompanyDto.name;
-		await this.entityManager.save(company);
-		return `This action updates a #${id} company`;
-	}
-
-	async remove(id: string) {
-		await this.companyRepository.delete(id);
-	}
-
-	async saveLogo(id: string, logo: Express.Multer.File) {
-		const company = await this.companyRepository.findOne({ where: { id } });
-		if (!company) {
-			throw new BadRequestException("Company not found!");
-		}
-
-		const uploadResult = await this.fileManagerService.uploadCompanyLogo(logo, {
-			companyId: id,
-			companyName: company.name,
-		});
-
-		if (!uploadResult.success) {
-			throw new Error("Failed to upload logo");
-		}
-
-		company.logo = uploadResult.fileUrl;
-		await this.companyRepository.save(company);
-
-		return { logo: company.logo };
 	}
 }

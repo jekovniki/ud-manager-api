@@ -20,7 +20,6 @@ import { DeleteResult } from "typeorm";
 })
 export class UserController {
 	constructor(private readonly usersService: UserService) {}
-
 	// @Get()
 	// findAll() {
 	// 	return this.usersService.findAll();
