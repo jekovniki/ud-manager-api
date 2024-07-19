@@ -106,6 +106,24 @@ export class UserService {
 		return user;
 	}
 
+	public async getAllCompanyUsers(
+		companyId: string,
+	): Promise<Omit<User, "password" | "refreshToken">[]> {
+		const users = await this.userRepository.find({
+			where: {
+				company: {
+					id: companyId,
+				},
+			},
+			relations: ["role", "company"],
+		});
+
+		return users.map((user) => {
+			const { password, refreshToken, ...userWithoutSensitiveInfo } = user;
+			return userWithoutSensitiveInfo;
+		});
+	}
+
 	public findOneByEmail(email: string): Promise<User> {
 		return this.userRepository.findOne({
 			where: { email },

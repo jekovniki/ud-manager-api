@@ -13,6 +13,7 @@ import { EmailService } from "src/configuration/email/email.service";
 import { UserService } from "../user/user.service";
 import { ConfigService } from "@nestjs/config";
 import { CreateUserDto } from "../user/dto/create-user.dto";
+import { User } from "../user/entities/user.entity";
 
 @Injectable()
 export class CompanyService {
@@ -75,6 +76,12 @@ export class CompanyService {
 
 	public async findOne(id: string) {
 		return this.companyRepository.findOneBy({ id });
+	}
+
+	public async getAllUsers(
+		id: string,
+	): Promise<Omit<User, "password" | "refreshToken">[]> {
+		return this.userService.getAllCompanyUsers(id);
 	}
 
 	public async update(id: string, updateCompanyDto: UpdateCompanyDto) {

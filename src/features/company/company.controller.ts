@@ -25,7 +25,7 @@ export class CompanyController {
 	constructor(private readonly companiesService: CompanyService) {}
 
 	@Post()
-	async create(@Body() createCompanyDto: CreateCompanyDto) {
+	public async create(@Body() createCompanyDto: CreateCompanyDto) {
 		try {
 			return this.companiesService.create(createCompanyDto);
 		} catch (error) {
@@ -34,7 +34,7 @@ export class CompanyController {
 	}
 
 	@Post("/user")
-	async addUser(@Body() createUserDto: CreateUserDto) {
+	public async addUser(@Body() createUserDto: CreateUserDto) {
 		return this.companiesService.addUserToCompany(
 			createUserDto.companyId,
 			createUserDto,
@@ -42,16 +42,17 @@ export class CompanyController {
 	}
 
 	@Get(":id")
-	async findOne(@Param("id") id: string) {
-		try {
-			return this.companiesService.findOne(id);
-		} catch (error) {
-			return null;
-		}
+	public async getCompany(@Param("id") id: string) {
+		return this.companiesService.findOne(id);
+	}
+
+	@Get(":id/user")
+	public async getAllCompanyUsers(@Param("id") id: string) {
+		return this.companiesService.getAllUsers(id);
 	}
 
 	@Patch(":id")
-	async update(
+	public async update(
 		@Param("id") id: string,
 		@Body() updateCompanyDto: UpdateCompanyDto,
 	) {
@@ -76,7 +77,7 @@ export class CompanyController {
 			},
 		},
 	})
-	async createLogo(
+	public async createLogo(
 		@Param("id") id: string,
 		@UploadedFile() logo: Express.Multer.File,
 	) {
