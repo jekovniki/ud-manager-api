@@ -76,8 +76,18 @@ export class UserService {
 		id: string,
 		user: CompleteUserRegistration,
 	) {
-		console.log("id : ", id);
-		console.log("user : ", user);
+		this.userRepository.update(
+			{
+				id,
+			},
+			{
+				password: user.password,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				position: user.position,
+				updatedAt: new Date(),
+			},
+		);
 	}
 
 	public findOneByEmail(email: string): Promise<User> {
