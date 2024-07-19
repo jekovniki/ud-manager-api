@@ -7,15 +7,16 @@ import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { EntityManager, Repository } from "typeorm";
 import { Company } from "./entities/company.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/features/user/entities/user.entity";
 import { Role } from "src/features/role/entities/role.entity";
-import { BadRequestError } from "@uploadthing/shared";
 import { FileManagerService } from "src/configuration/file-manager/file-manager.service";
 import { EmailService } from "src/configuration/email/email.service";
+import { UserService } from "../user/user.service";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class CompanyService {
 	constructor(
+		private readonly configService: ConfigService,
 		private readonly mailService: EmailService,
 		private readonly fileManagerService: FileManagerService,
 		@InjectRepository(Company)
@@ -23,6 +24,7 @@ export class CompanyService {
 		@InjectRepository(Role)
 		private readonly rolesRepository: Repository<Role>,
 		private readonly entityManager: EntityManager,
+		private readonly userService: UserService,
 	) {}
 
 	async create(
@@ -67,23 +69,17 @@ export class CompanyService {
 			throw new Error(`Role with ID ${employee.roleId} not found`);
 		}
 
-		await transactionalEntityManager.save(
-			new User({
-				email: employee.email,
-				password: "",
-				firstName: "",
-				lastName: "",
-				role: role,
-				position: "",
-				refresh_token: "",
-				company: company,
-			}),
+		const result = await this.userService.create(
+			transactionalEntityManager,
+			company,
+			role,
+			employee.email,
 		);
 
 		this.mailService.sendRegistrationMail(
 			employee.email,
 			company.name,
-			"test-link",
+			`${this.configService.getOrThrow("APP_URL")}/?email=${employee.email}&userId=${result.id}&companyId=${result.company.id}&rt=${result.registrationToken}`,
 		);
 	}
 

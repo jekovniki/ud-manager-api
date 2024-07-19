@@ -1,6 +1,8 @@
 import { Module } from "@nestjs/common";
 import { MailerModule } from "@nestjs-modules/mailer";
 import { EmailService } from "./email.service";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+import { join } from "path";
 
 @Module({
 	imports: [
@@ -11,6 +13,16 @@ import { EmailService } from "./email.service";
 				auth: {
 					user: process.env.EMAIL_USERNAME,
 					pass: process.env.EMAIL_PASSWORD,
+				},
+			},
+			defaults: {
+				from: '"АМС Мениджър" <noreply@amc-manager.com>',
+			},
+			template: {
+				dir: join(process.cwd(), "templates"),
+				adapter: new HandlebarsAdapter(),
+				options: {
+					strict: true,
 				},
 			},
 		}),

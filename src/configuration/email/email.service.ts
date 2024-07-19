@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
+import { join } from "path";
 
 @Injectable()
 export class EmailService {
@@ -7,33 +8,18 @@ export class EmailService {
 
 	constructor(private readonly mailService: MailerService) {}
 
-	public sendMail(to: string, subject: string, text: string, from: string) {
-		this.mailService.sendMail({
-			from,
-			to,
-			subject,
-			text,
-		});
-	}
-
-	public sendRegistrationMail(
+	public async sendRegistrationMail(
 		to: string,
 		companyName: string,
 		registrationLink: string,
 	) {
-		try {
-			this.sendMail(
-				to,
-				"AMC Manager | Регистрация",
-				`Здравей, 
-				Получаваш този мейл, защото ${companyName} те регистрира като служител в AMC Manager.
-				
-				Довърши регистрацията си, за да можеш да ползваш системата пълноценно:
-				${registrationLink}`,
-				this.companyEmail,
-			);
-		} catch (error) {
-			console.error(error);
-		}
+		console.log("Template name:", "registration");
+		await this.mailService.sendMail({
+			from: this.companyEmail,
+			to,
+			subject: "AMC Manager | Регистрация",
+			template: "registration", // This should match the name of your template file without the extension
+			context: { companyName, registrationLink }, // This is the context object that will be passed to the template
+		});
 	}
 }

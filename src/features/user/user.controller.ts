@@ -6,46 +6,37 @@ import {
 	Param,
 	Delete,
 	Put,
+	Post,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { CompleteUserRegistration } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiTags } from "@nestjs/swagger";
 
 @ApiTags("User")
-@Controller("users")
+@Controller({
+	path: "user",
+	version: "1",
+})
 export class UserController {
 	constructor(private readonly usersService: UserService) {}
 
-	@Get()
-	findAll() {
-		return this.usersService.findAll();
-	}
+	// @Get()
+	// findAll() {
+	// 	return this.usersService.findAll();
+	// }
 
-	@Put(":id")
-	completeUser(
-		@Param("id") id: string,
-		userRegistration: CompleteUserRegistration,
-	) {
-		try {
-			return this.usersService.completeRegistration(id, userRegistration);
-		} catch (error) {
-			return null;
-		}
-	}
+	// @Get(":id")
+	// findOne(@Param("id") id: string) {
+	// 	return this.usersService.findOne(+id);
+	// }
 
-	@Get(":id")
-	findOne(@Param("id") id: string) {
-		return this.usersService.findOne(+id);
-	}
+	// @Patch(":id")
+	// update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
+	// 	return this.usersService.update(+id, updateUserDto);
+	// }
 
-	@Patch(":id")
-	update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-		return this.usersService.update(+id, updateUserDto);
-	}
-
-	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.usersService.remove(+id);
-	}
+	// @Delete(":id")
+	// remove(@Param("id") id: string) {
+	// 	return this.usersService.remove(+id);
+	// }
 }

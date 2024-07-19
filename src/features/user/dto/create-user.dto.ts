@@ -1,14 +1,15 @@
-export class CreateUserDto {
-	company_id: string;
-	email: string;
-	role_id: number;
-}
+import { IsEmail, IsUUID, IsInt, IsNotEmpty } from "class-validator";
 
-export class CompleteUserRegistration {
-	refreshToken: string;
-	firstName: string;
-	lastName: string;
-	position: string;
-	password: string;
+export class CreateUserDto {
+	@IsUUID()
+	@IsNotEmpty()
+	company_id: string;
+
+	@IsEmail()
+	@IsNotEmpty()
 	email: string;
+
+	@IsInt()
+	@IsNotEmpty()
+	role_id: number;
 }

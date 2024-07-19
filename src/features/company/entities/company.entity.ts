@@ -23,12 +23,14 @@ export class Company {
 	@Column({
 		type: "timestamptz",
 		default: new Date(),
+		name: "created_at",
 	})
 	createdAt: Date;
 
 	@Column({
 		type: "timestamptz",
 		default: new Date(),
+		name: "updated_at",
 	})
 	updatedAt: Date;
 

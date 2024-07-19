@@ -32,11 +32,11 @@ export class CreateUserTable1720599895236 implements MigrationInterface {
 						type: "varchar",
 					},
 					{
-						name: "firstName",
+						name: "first_name",
 						type: "varchar",
 					},
 					{
-						name: "lastName",
+						name: "last_name",
 						type: "varchar",
 					},
 					{
@@ -48,20 +48,20 @@ export class CreateUserTable1720599895236 implements MigrationInterface {
 						type: "varchar",
 					},
 					{
-						name: "roleId",
+						name: "role_id",
 						type: "int",
 					},
 					{
-						name: "companyId",
+						name: "company_id",
 						type: "uuid",
 					},
 					{
-						name: "createdAt",
+						name: "created_at",
 						type: "timestamptz",
 						default: "now()",
 					},
 					{
-						name: "updatedAt",
+						name: "updated_at",
 						type: "timestamptz",
 						default: "now()",
 					},
@@ -72,13 +72,13 @@ export class CreateUserTable1720599895236 implements MigrationInterface {
 
 		await queryRunner.createForeignKeys("user", [
 			new TableForeignKey({
-				columnNames: ["roleId"],
+				columnNames: ["role_id"],
 				referencedColumnNames: ["id"],
 				referencedTableName: "roles",
 				onDelete: "CASCADE",
 			}),
 			new TableForeignKey({
-				columnNames: ["companyId"],
+				columnNames: ["company_id"],
 				referencedColumnNames: ["id"],
 				referencedTableName: "company",
 			}),
