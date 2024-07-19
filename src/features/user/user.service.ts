@@ -114,4 +114,10 @@ export class UserService {
 			},
 		);
 	}
+
+	public async delete(id: string) {
+		return this.userRepository.delete({
+			id,
+		});
+	}
 }

@@ -11,6 +11,7 @@ import {
 import { UserService } from "./user.service";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
+import { DeleteResult } from "typeorm";
 
 @ApiTags("User")
 @Controller({
@@ -35,8 +36,12 @@ export class UserController {
 	// 	return this.usersService.update(+id, updateUserDto);
 	// }
 
-	// @Delete(":id")
-	// remove(@Param("id") id: string) {
-	// 	return this.usersService.remove(+id);
-	// }
+	/**
+	 * @TODO : Add permissions
+	 */
+	@Delete(":id")
+	async remove(@Param("id") id: string): Promise<DeleteResult> {
+		await this.usersService.delete(id);
+		return;
+	}
 }
