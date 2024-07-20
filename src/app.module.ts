@@ -9,6 +9,9 @@ import { RoleModule } from "./features/role/role.module";
 import { WinstonModule } from "nest-winston";
 import { LoggerConfig } from "./configuration/logger/logger.config";
 import { CustomLogger } from "./configuration/logger/logger.module";
+import { APP_GUARD } from "@nestjs/core";
+import { PermissionGuard } from "./common/guard/permission.guard";
+import { AccessGuard } from "./common/guard/access.guard";
 
 @Module({
 	imports: [
@@ -29,6 +32,16 @@ import { CustomLogger } from "./configuration/logger/logger.module";
 		PermissionModule,
 		RoleModule,
 	],
-	providers: [CustomLogger],
+	providers: [
+		{
+			provide: APP_GUARD,
+			useClass: AccessGuard,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: PermissionGuard,
+		},
+		CustomLogger,
+	],
 })
 export class AppModule {}

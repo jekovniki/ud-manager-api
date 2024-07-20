@@ -3,11 +3,11 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
 	Param,
 	UseInterceptors,
 	UploadedFile,
 	BadRequestException,
+	Put,
 } from "@nestjs/common";
 import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
@@ -15,6 +15,10 @@ import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateUserDto } from "../user/dto/create-user.dto";
+import { Public } from "src/common/decorator/public.decorator";
+import { Permission } from "src/common/decorator/permission.decorator";
+import { User } from "src/common/decorator/user.decorator";
+import { RequestUserData } from "src/common/interface/server.interface";
 
 @ApiTags("Company")
 @Controller({
@@ -25,15 +29,13 @@ export class CompanyController {
 	constructor(private readonly companiesService: CompanyService) {}
 
 	@Post()
+	@Public()
 	public async create(@Body() createCompanyDto: CreateCompanyDto) {
-		try {
-			return this.companiesService.create(createCompanyDto);
-		} catch (error) {
-			return null;
-		}
+		return this.companiesService.create(createCompanyDto);
 	}
 
 	@Post("/user")
+	@Permission("user:CREATE")
 	public async addUser(@Body() createUserDto: CreateUserDto) {
 		return this.companiesService.addUserToCompany(
 			createUserDto.companyId,
@@ -41,28 +43,34 @@ export class CompanyController {
 		);
 	}
 
-	@Get(":id")
-	public async getCompany(@Param("id") id: string) {
-		return this.companiesService.findOne(id);
+	@Get("/my")
+	@Permission("company:READ")
+	public async getCompany(@User() user: RequestUserData) {
+		return this.companiesService.findOne(user.companyId);
 	}
 
-	@Get(":id/user")
-	public async getAllCompanyUsers(@Param("id") id: string) {
-		return this.companiesService.getAllUsers(id);
+	@Get("my/user")
+	@Permission("company:READ")
+	public async getAllCompanyUsers(@User() user: RequestUserData) {
+		return this.companiesService.getAllUsers(user.companyId);
 	}
 
-	@Patch(":id")
+	/**
+	 * @todo : finish this. only name is updated rn.
+	 */
+	@Put("/my")
+	@Permission("company:UPDATE")
 	public async update(
-		@Param("id") id: string,
+		@User() user: RequestUserData,
 		@Body() updateCompanyDto: UpdateCompanyDto,
 	) {
-		try {
-			return this.companiesService.update(id, updateCompanyDto);
-		} catch (error) {
-			return null;
-		}
+		return this.companiesService.update(user.companyId, updateCompanyDto);
 	}
 
+	/**
+	 * @todo : complete this method and implement the upload thing s3
+	 */
+	@Public()
 	@Post(":id/logo")
 	@UseInterceptors(FileInterceptor("logo"))
 	@ApiConsumes("multipart/form-data")
@@ -81,13 +89,9 @@ export class CompanyController {
 		@Param("id") id: string,
 		@UploadedFile() logo: Express.Multer.File,
 	) {
-		try {
-			if (!logo) {
-				throw new BadRequestException("Logo file is required");
-			}
-			return this.companiesService.saveLogo(id, logo);
-		} catch (error) {
-			return null;
+		if (!logo) {
+			throw new BadRequestException("Logo file is required");
 		}
+		return this.companiesService.saveLogo(id, logo);
 	}
 }

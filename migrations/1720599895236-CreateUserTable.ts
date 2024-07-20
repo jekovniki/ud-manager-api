@@ -74,7 +74,7 @@ export class CreateUserTable1720599895236 implements MigrationInterface {
 			new TableForeignKey({
 				columnNames: ["role_id"],
 				referencedColumnNames: ["id"],
-				referencedTableName: "roles",
+				referencedTableName: "role",
 				onDelete: "CASCADE",
 			}),
 			new TableForeignKey({

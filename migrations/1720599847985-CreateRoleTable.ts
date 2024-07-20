@@ -7,7 +7,7 @@ export class CreateRolesTable1720599847985 implements MigrationInterface {
 		this.logger.log("UP - START");
 		await queryRunner.createTable(
 			new Table({
-				name: "roles",
+				name: "role",
 				columns: [
 					{
 						name: "id",
@@ -30,7 +30,7 @@ export class CreateRolesTable1720599847985 implements MigrationInterface {
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
 		this.logger.log("DOWN - START");
-		await queryRunner.dropTable("roles");
+		await queryRunner.dropTable("role");
 		this.logger.log("DOWN - COMPLETED");
 	}
 }

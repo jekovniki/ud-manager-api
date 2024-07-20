@@ -8,7 +8,7 @@ export class CreatePermissionTable1720599761237 implements MigrationInterface {
 		this.logger.log("UP - START");
 		await queryRunner.createTable(
 			new Table({
-				name: "permissions",
+				name: "permission",
 				columns: [
 					{
 						name: "id",
@@ -18,9 +18,13 @@ export class CreatePermissionTable1720599761237 implements MigrationInterface {
 						generationStrategy: "increment",
 					},
 					{
-						name: "name",
+						name: "feature",
 						type: "varchar",
-						isUnique: true,
+					},
+					{
+						name: "permission",
+						type: "enum",
+						enum: ["READ", "CREATE", "DELETE", "UPDATE"],
 					},
 				],
 			}),
@@ -31,7 +35,7 @@ export class CreatePermissionTable1720599761237 implements MigrationInterface {
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
 		this.logger.log("DOWN - START");
-		await queryRunner.dropTable("permissions");
+		await queryRunner.dropTable("permission");
 		this.logger.log("DOWN - COMPLETED");
 	}
 }
