@@ -53,7 +53,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, "access") {
 			);
 
 			return {
-				userId: payload.sub,
+				id: payload.sub,
 				companyId: payload.cid,
 			};
 		} catch (error) {

@@ -5,6 +5,6 @@ export interface RequestWithUser extends Request {
 }
 
 export interface RequestUserData {
-	userId: string;
+	id: string;
 	companyId: string;
 }

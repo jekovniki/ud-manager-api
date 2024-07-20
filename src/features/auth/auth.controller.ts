@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Request, Response } from "@nestjs/common";
+import { Body, Controller, Post, Response } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { AuthDto, CompleteUserRegistration } from "./dto/auth.dto";
-import { RequestWithUser } from "../../common/interface/server.interface";
+import { RequestUserData } from "../../common/interface/server.interface";
 import { Public } from "src/common/decorators/public.decorator";
+import { User } from "src/common/decorators/user.decorator";
 
 @ApiTags("Authentication & Authorization")
 @Controller({
@@ -41,15 +42,27 @@ export class AuthController {
 	}
 
 	@Post("/sign-out")
-	public async signout(@Request() request: RequestWithUser): Promise<void> {
-		console.log(request.user);
-		// await this.authService.signout(request.user.id);
+	public async signout(
+		@User() user: RequestUserData,
+		@Response({ passthrough: true }) response,
+	): Promise<void> {
+		await this.authService.signout(user.id);
+
+		response.clearCookie("at", {
+			sameSite: "strict",
+			httpOnly: true,
+		});
+
+		response.clearCookie("rt", {
+			sameSite: "strict",
+			httpOnly: true,
+		});
 		return;
 	}
 
 	@Post("/refresh")
-	public async refreshTokens() {
+	public async refreshTokens(): Promise<void> {
 		await this.authService.refreshTokens();
-		return true;
+		return;
 	}
 }
