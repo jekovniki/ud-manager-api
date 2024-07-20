@@ -1,15 +1,18 @@
-import { NestFactory } from "@nestjs/core";
+import { NestFactory, Reflector } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { CustomLogger } from "./configuration/logger/logger.module";
 import cookieParser = require("cookie-parser");
+import { AccessGuard } from "./common/guards/access.guard";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
 		bufferLogs: true,
 	});
 	app.useLogger(app.get(CustomLogger));
+	const reflector = new Reflector();
+	app.useGlobalGuards(new AccessGuard(reflector));
 	const options = new DocumentBuilder()
 		.setTitle("UD Manager API")
 		.setDescription("List of all APIs for the UD Manager")

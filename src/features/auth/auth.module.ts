@@ -5,9 +5,9 @@ import { UserService } from "../user/user.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../user/entities/user.entity";
 import { PassportModule } from "@nestjs/passport";
-import { LocalStrategy } from "./strategies/local.stategy";
-import { AccessTokenStrategy } from "./strategies/access-token.strategy";
-import { RefreshTokenStrategy } from "./strategies/refresh-token.strategy";
+import { LocalStrategy } from "./strategy/local.stategy";
+import { AccessTokenStrategy } from "./strategy/access-token.strategy";
+import { RefreshTokenStrategy } from "./strategy/refresh-token.strategy";
 import { JwtModule } from "@nestjs/jwt";
 
 @Module({

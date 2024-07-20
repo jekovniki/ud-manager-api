@@ -1,6 +1,7 @@
 import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { RoleService } from "./role.service";
+import { Public } from "src/common/decorators/public.decorator";
 
 @ApiTags("Roles")
 @Controller({
@@ -10,6 +11,7 @@ import { RoleService } from "./role.service";
 export class RoleController {
 	constructor(private readonly roleService: RoleService) {}
 
+	@Public()
 	@Get()
 	async findAll() {
 		try {

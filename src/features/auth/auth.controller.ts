@@ -1,17 +1,9 @@
-import {
-	Body,
-	Controller,
-	Param,
-	Post,
-	Request,
-	Response,
-	UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Post, Request, Response } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { AuthDto, CompleteUserRegistration } from "./dto/auth.dto";
-import { AuthGuard } from "@nestjs/passport";
-import { RequestWithUser } from "./auth.interface";
+import { RequestWithUser } from "../../common/interface/server.interface";
+import { Public } from "src/common/decorators/public.decorator";
 
 @ApiTags("Authentication & Authorization")
 @Controller({
@@ -21,12 +13,14 @@ import { RequestWithUser } from "./auth.interface";
 export class AuthController {
 	constructor(private authService: AuthService) {}
 
+	@Public()
 	@Post("/sign-up/local")
 	@ApiBody({ type: CompleteUserRegistration })
 	public async signUpLocal(@Body() userRegistration: CompleteUserRegistration) {
 		return this.authService.completeUserRegistration(userRegistration);
 	}
 
+	@Public()
 	@Post("/sign-in/local")
 	public async signInLocal(@Body() credentials: AuthDto, @Response() response) {
 		const { tokens, ...authorization } =
@@ -46,7 +40,6 @@ export class AuthController {
 		return response.send(authorization);
 	}
 
-	@UseGuards(AuthGuard("access"))
 	@Post("/sign-out")
 	public async signout(@Request() request: RequestWithUser): Promise<void> {
 		console.log(request.user);
@@ -54,7 +47,6 @@ export class AuthController {
 		return;
 	}
 
-	@UseGuards(AuthGuard("refresh"))
 	@Post("/refresh")
 	public async refreshTokens() {
 		await this.authService.refreshTokens();
