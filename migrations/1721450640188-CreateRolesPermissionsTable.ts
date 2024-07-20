@@ -1,4 +1,10 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import {
+	MigrationInterface,
+	QueryRunner,
+	Table,
+	TableForeignKey,
+	TableIndex,
+} from "typeorm";
 import { Logger } from "@nestjs/common";
 
 export class CreateRolesPermissionsTable1721450640188
@@ -32,6 +38,42 @@ export class CreateRolesPermissionsTable1721450640188
 				],
 			}),
 			true,
+		);
+
+		await queryRunner.createForeignKey(
+			"role_permission",
+			new TableForeignKey({
+				columnNames: ["role_id"],
+				referencedColumnNames: ["id"],
+				referencedTableName: "role",
+				onDelete: "CASCADE",
+			}),
+		);
+
+		await queryRunner.createForeignKey(
+			"role_permission",
+			new TableForeignKey({
+				columnNames: ["permission_id"],
+				referencedColumnNames: ["id"],
+				referencedTableName: "permission",
+				onDelete: "CASCADE",
+			}),
+		);
+
+		await queryRunner.createIndex(
+			"role_permission",
+			new TableIndex({
+				name: "IDX_ROLE_PERMISSION_ROLE_ID",
+				columnNames: ["role_id"],
+			}),
+		);
+
+		await queryRunner.createIndex(
+			"role_permission",
+			new TableIndex({
+				name: "IDX_ROLE_PERMISSION_PERMISSION_ID",
+				columnNames: ["permission_id"],
+			}),
 		);
 		this.logger.log("UP - COMPLETED");
 	}

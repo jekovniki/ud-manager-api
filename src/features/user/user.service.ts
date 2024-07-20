@@ -96,7 +96,7 @@ export class UserService {
 		const { password, refreshToken, ...user } =
 			await this.userRepository.findOne({
 				where: { id },
-				relations: ["role", "company"],
+				relations: ["role", "company", "role.permissions"],
 			});
 
 		if (!user) {
@@ -127,6 +127,12 @@ export class UserService {
 	public findOneByEmail(email: string): Promise<User> {
 		return this.userRepository.findOne({
 			where: { email },
+			relations: {
+				role: {
+					permissions: true,
+				},
+				company: true,
+			},
 		});
 	}
 

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "src/features/role/entities/role.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 type PermissionType = "READ" | "CREATE" | "UPDATE" | "DELETE";
 
@@ -15,6 +16,9 @@ export class Permission {
 		enum: ["READ", "CREATE", "DELETE", "UPDATE"],
 	})
 	permission: PermissionType;
+
+	@ManyToMany(() => Role)
+	roles: Role[];
 
 	constructor(permission: Partial<Permission>) {
 		Object.assign(this, permission);
