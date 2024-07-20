@@ -35,9 +35,9 @@ export class AuthController {
 	}
 
 	@Post("/sign-out")
-	public async signout() {
-		await this.authService.signout();
-		return true;
+	public async signout(userId: string): Promise<void> {
+		await this.authService.signout(userId);
+		return;
 	}
 
 	@UseGuards(AuthenticatedGuard)

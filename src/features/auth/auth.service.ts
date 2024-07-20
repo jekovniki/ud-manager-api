@@ -13,7 +13,9 @@ export class AuthService {
 		private jwtService: JwtService,
 	) {}
 	public async signInLocal() {}
-	public async signout() {}
+	public async signout(userId: string): Promise<void> {
+		await this.userService.updateRefreshToken(userId, "");
+	}
 	public async refreshTokens() {}
 
 	public async completeUserRegistration(
