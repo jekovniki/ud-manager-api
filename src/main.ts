@@ -4,7 +4,7 @@ import { ValidationPipe, VersioningType } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { CustomLogger } from "./configuration/logger/logger.module";
 import cookieParser = require("cookie-parser");
-import { AccessGuard } from "./common/guards/access.guard";
+import { AccessGuard } from "./common/guard/access.guard";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
