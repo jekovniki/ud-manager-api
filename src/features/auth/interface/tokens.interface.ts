@@ -3,7 +3,7 @@ export interface AccessTokenPayload {
 	sub: string;
 	cid: string;
 	scope: string[];
-	roles: string;
+	role: string;
 	iat: number;
 	exp: number;
 }

@@ -55,6 +55,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, "access") {
 			return {
 				id: payload.sub,
 				companyId: payload.cid,
+				permissions: payload.scope,
 			};
 		} catch (error) {
 			throw new UnauthorizedException("Invalid access token");

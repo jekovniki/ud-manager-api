@@ -16,7 +16,7 @@ import {
 } from "../../common/interface/server.interface";
 import { Public } from "src/common/decorator/public.decorator";
 import { User } from "src/common/decorator/user.decorator";
-import { RefreshGuard } from "src/common/guards/refresh.guard";
+import { RefreshGuard } from "src/common/guard/refresh.guard";
 import { RefreshToken } from "./decorator/refresh.decorator";
 
 @ApiTags("Authentication & Authorization")

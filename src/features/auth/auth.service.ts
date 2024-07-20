@@ -151,7 +151,7 @@ export class AuthService {
 				sub: userId,
 				cid: companyId,
 				scope: permissions,
-				roles: role,
+				role: role,
 			},
 			{
 				expiresIn: 60 * 15, // 15 mins
