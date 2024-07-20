@@ -90,14 +90,11 @@ export class UserService {
 		);
 	}
 
-	public async findOneById(
-		id: string,
-	): Promise<Omit<User, "password" | "refreshToken">> {
-		const { password, refreshToken, ...user } =
-			await this.userRepository.findOne({
-				where: { id },
-				relations: ["role", "company", "role.permissions"],
-			});
+	public async findOneById(id: string): Promise<User> {
+		const user = await this.userRepository.findOne({
+			where: { id },
+			relations: ["role", "company", "role.permissions"],
+		});
 
 		if (!user) {
 			throw new NotFoundException(`User with ID "${id}" not found`);

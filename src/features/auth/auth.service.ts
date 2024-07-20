@@ -4,6 +4,7 @@ import { hashData, validateHash } from "../../utils";
 import { ConfigService } from "@nestjs/config";
 import { AuthDto, CompleteUserRegistration } from "./dto/auth.dto";
 import { JwtService } from "@nestjs/jwt";
+import { Permission } from "../permission/entities/permission.entity";
 
 @Injectable()
 export class AuthService {
@@ -15,11 +16,11 @@ export class AuthService {
 	public async signInLocal(credentials: AuthDto) {
 		const user = await this.userService.findOneByEmail(credentials.email);
 		if (!user) {
-			throw new BadRequestException("Грешно име или парола");
+			throw new BadRequestException("Wrong credentials");
 		}
 		if (!user.password) {
 			throw new BadRequestException(
-				"Моля завършете регистрацията си, преди да се впишете. Би следвало да сте получили имейл на вашата електронна поща.",
+				"Please complete registration before you try to sign in",
 			);
 		}
 
@@ -28,7 +29,7 @@ export class AuthService {
 			user.password,
 		);
 		if (!isValidPassword) {
-			throw new BadRequestException("Грешно име или парола");
+			throw new BadRequestException("Wrong credentials");
 		}
 
 		const permissions = user.role.permissions.map(
@@ -37,21 +38,45 @@ export class AuthService {
 		const tokens = await this.getTokens(
 			user.id,
 			user.company.id,
-			[user.role.name],
+			user.role.name,
 			permissions,
 		);
 
-		this.userService.updateRefreshToken(user.id, tokens.refreshToken);
+		await this.hashAndUpdateRefreshToken(user.id, tokens.refreshToken);
 
 		return {
 			tokens,
 			role: user.role,
 		};
 	}
+
 	public async signout(userId: string): Promise<void> {
 		await this.userService.updateRefreshToken(userId, ""); // invalidates the refresh token
 	}
-	public async refreshTokens() {}
+
+	public async refreshTokens(
+		userId: string,
+		refreshToken: string,
+	): Promise<string> {
+		const user = await this.userService.findOneById(userId);
+		if (!user) {
+			throw new BadRequestException("User does not exist");
+		}
+
+		const isValidToken = await validateHash(refreshToken, user.refreshToken);
+		if (!isValidToken) {
+			throw new BadRequestException("Invalid refresh token");
+		}
+		const userPermissions = this.getUserPermissionsArray(user.role.permissions);
+		const accessToken = this.generateAccessToken(
+			user.id,
+			user.company.id,
+			user.role.name,
+			userPermissions,
+		);
+
+		return accessToken;
+	}
 
 	public async completeUserRegistration(
 		userRegistration: CompleteUserRegistration,
@@ -85,13 +110,13 @@ export class AuthService {
 		});
 
 		if (payload.sub !== userId || payload.cid !== companyId) {
-			throw new BadRequestException("Използваният ключ не е за този профил");
+			throw new BadRequestException("The used token is not for this user");
 		}
 
 		const storedToken =
 			await this.userService.findUserByToken(registrationToken);
 		if (!storedToken) {
-			throw new BadRequestException("Потребителят вече е регистриран");
+			throw new BadRequestException("User is already registered");
 		}
 
 		await this.userService.updateRefreshToken(userId, "");
@@ -100,34 +125,12 @@ export class AuthService {
 	public async getTokens(
 		userId: string,
 		companyId: string,
-		role: string[],
+		role: string,
 		permissions: string[],
 	): Promise<{ accessToken: string; refreshToken: string }> {
 		const [accessToken, refreshToken] = await Promise.all([
-			this.jwtService.signAsync(
-				{
-					iss: this.configService.getOrThrow("APP_URL"),
-					sub: userId,
-					cid: companyId,
-					scope: permissions,
-					roles: role,
-				},
-				{
-					expiresIn: 60 * 15, // 15 mins
-					secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
-				},
-			),
-			this.jwtService.signAsync(
-				{
-					iss: this.configService.getOrThrow("APP_URL"),
-					sub: userId,
-					cid: companyId,
-				},
-				{
-					expiresIn: 60 * 60 * 24 * 7, // 7 days
-					secret: this.configService.getOrThrow("REFRESH_TOKEN_SECRET"),
-				},
-			),
+			this.generateAccessToken(userId, companyId, role, permissions),
+			this.generateRefreshToken(userId, companyId),
 		]);
 
 		return {
@@ -136,17 +139,57 @@ export class AuthService {
 		};
 	}
 
-	public async validateUser(email: string, password: string): Promise<any> {
-		const user = await this.userService.findOneByEmail(email);
-		if (user && user.password === password) {
-			const { email, ...rest } = user;
-			return rest;
-		}
-
-		return null;
+	public async generateAccessToken(
+		userId: string,
+		companyId: string,
+		role: string,
+		permissions: string[],
+	): Promise<string> {
+		return await this.jwtService.signAsync(
+			{
+				iss: this.configService.getOrThrow("APP_URL"),
+				sub: userId,
+				cid: companyId,
+				scope: permissions,
+				roles: role,
+			},
+			{
+				expiresIn: 60 * 15, // 15 mins
+				secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
+			},
+		);
 	}
 
-	public async updateRefreshToken(
+	public async generateRefreshToken(
+		userId: string,
+		companyId: string,
+	): Promise<string> {
+		return await this.jwtService.signAsync(
+			{
+				iss: this.configService.getOrThrow("APP_URL"),
+				sub: userId,
+				cid: companyId,
+			},
+			{
+				expiresIn: 60 * 60 * 24 * 7, // 7 days
+				secret: this.configService.getOrThrow("REFRESH_TOKEN_SECRET"),
+			},
+		);
+	}
+
+	private getUserPermissionsArray(permissions: Permission[]): string[] {
+		return permissions.map(
+			(permission) => `${permission.feature}:${permission.permission}`,
+		);
+	}
+
+	/*
+	 * @note : original name was: updateRefreshToken
+	 * However, I mistaked it for the updateRefreshToken from the this.userService
+	 * and i felt this way it will be less problematic when I get back to this
+	 * peace of code at some point in the future
+	 */
+	public async hashAndUpdateRefreshToken(
 		userId: string,
 		refreshToken: string,
 	): Promise<string> {

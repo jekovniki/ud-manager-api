@@ -8,3 +8,7 @@ export interface RequestUserData {
 	id: string;
 	companyId: string;
 }
+
+export interface RequestRefreshUserToken extends RequestUserData {
+	refreshToken: string;
+}

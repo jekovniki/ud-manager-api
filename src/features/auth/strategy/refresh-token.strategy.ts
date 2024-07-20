@@ -2,14 +2,22 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { RefreshTokenPayload } from "../interface/tokens.interface";
+import { JwtService } from "@nestjs/jwt";
+import { RequestRefreshUserToken } from "src/common/interface/server.interface";
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
 	Strategy,
 	"refresh",
 ) {
-	constructor(configServicce: ConfigService) {
+	private readonly configService: ConfigService;
+
+	constructor(
+		configServicce: ConfigService,
+		private readonly jwtService: JwtService,
+	) {
 		super({
 			jwtFromRequest: (req) => {
 				/* most likely there is better way than doing this
@@ -26,15 +34,36 @@ export class RefreshTokenStrategy extends PassportStrategy(
 			secretOrKey: configServicce.getOrThrow("REFRESH_TOKEN_SECRET"),
 			passReqToCallback: true,
 		});
+		this.configService = configServicce;
 	}
 
-	public validate(req: Request, payload: any) {
-		// console.log("req.cookie inside", req.cookies);
-		// console.log("RefreshTokenStrategy refreshToken :", refreshToken);
-		return {
-			payload,
-			refreshToken: "",
-		};
+	public async validate(req: Request): Promise<RequestRefreshUserToken> {
+		const cookies = req.headers.cookie
+			? this.parseCookies(req.headers.cookie)
+			: {};
+
+		const token = cookies["rt"];
+
+		if (!token) {
+			throw new UnauthorizedException("Access token not found");
+		}
+
+		try {
+			const payload: RefreshTokenPayload = await this.jwtService.verifyAsync(
+				token,
+				{
+					secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
+				},
+			);
+
+			return {
+				id: payload.sub,
+				companyId: payload.cid,
+				refreshToken: token,
+			};
+		} catch (error) {
+			throw new UnauthorizedException("Invalid access token");
+		}
 	}
 
 	private parseCookies(cookieHeader: string): { [key: string]: string } {

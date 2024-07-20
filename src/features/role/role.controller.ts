@@ -1,7 +1,7 @@
 import { Controller, Get } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { RoleService } from "./role.service";
-import { Public } from "src/common/decorators/public.decorator";
+import { Public } from "src/common/decorator/public.decorator";
 
 @ApiTags("Roles")
 @Controller({
