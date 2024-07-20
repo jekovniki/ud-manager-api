@@ -3,8 +3,6 @@ import { WINSTON_MODULE_PROVIDER } from "nest-winston";
 import { Logger } from "winston";
 import { Inject } from "@nestjs/common";
 
-const { Loggly } = require("winston-loggly-bulk");
-
 @Injectable()
 export class CustomLogger extends ConsoleLogger {
 	private readonly isDev = process.env.NODE_ENV === "development";
@@ -13,16 +11,6 @@ export class CustomLogger extends ConsoleLogger {
 		context?: string,
 	) {
 		super(context);
-		if (process.env.NODE_ENV && process.env.NODE_ENV !== "development") {
-			this.winstonLogger.add(
-				new Loggly({
-					token: process.env.LOG_MANAGEMENT_TOKEN,
-					subdomain: process.env.LOG_MANAGEMENT_SUBDOMAIN,
-					tags: [process.env.LOG_MANAGEMENT_DEFAULT_TAG],
-					json: true,
-				}),
-			);
-		}
 	}
 
 	/**
