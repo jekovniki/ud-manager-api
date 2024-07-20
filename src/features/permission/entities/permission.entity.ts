@@ -1,14 +1,22 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+type PermissionType = "READ" | "WRITE" | "CREATE" | "UPDATE" | "DELETE";
+
+@Entity("permission")
 export class Permission {
 	@PrimaryGeneratedColumn()
 	id: number;
 
 	@Column({ unique: true })
-	name: string;
+	feature: string;
 
-	constructor(permission: Partial<Permissions>) {
+	@Column({
+		type: "enum",
+		enum: ["READ", "WRITE", "CREATE", "DELETE", "UPDATE"],
+	})
+	permission: PermissionType;
+
+	constructor(permission: Partial<Permission>) {
 		Object.assign(this, permission);
 	}
 }
