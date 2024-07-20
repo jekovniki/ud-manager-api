@@ -7,6 +7,7 @@ const { Loggly } = require("winston-loggly-bulk");
 
 @Injectable()
 export class CustomLogger extends ConsoleLogger {
+	private readonly isDev = process.env.NODE_ENV === "development";
 	constructor(
 		@Inject(WINSTON_MODULE_PROVIDER) private winstonLogger: Logger,
 		context?: string,
@@ -24,28 +25,47 @@ export class CustomLogger extends ConsoleLogger {
 		}
 	}
 
+	/**
+	 * @note : I use the default logger for dev env because I like the colors
+	 * I use loggly for staging and prod in order to have logs actually
+	 */
 	log(message: string, context?: string) {
-		super.log.apply(this, [message, context]);
-		this.winstonLogger.info(message, { context });
+		if (this.isDev) {
+			super.log.apply(this, [message, context]);
+		} else {
+			this.winstonLogger.info(message, { context });
+		}
 	}
 
 	error(message: string, trace?: string, context?: string) {
-		super.error.apply(this, [message, trace, context]);
-		this.winstonLogger.error(message, { context, trace });
+		if (this.isDev) {
+			super.error.apply(this, [message, trace, context]);
+		} else {
+			this.winstonLogger.error(message, { context, trace });
+		}
 	}
 
 	warn(message: string, context?: string) {
-		super.warn.apply(this, [message, context]);
-		this.winstonLogger.warn(message, { context });
+		if (this.isDev) {
+			super.warn.apply(this, [message, context]);
+		} else {
+			this.winstonLogger.warn(message, { context });
+		}
 	}
 
 	debug(message: string, context?: string) {
-		super.debug.apply(this, [message, context]);
-		this.winstonLogger.debug(message, { context });
+		if (this.isDev) {
+			super.debug.apply(this, [message, context]);
+		} else {
+			this.winstonLogger.debug(message, { context });
+		}
 	}
 
 	verbose(message: string, context?: string) {
-		super.verbose.apply(this, [message, context]);
-		this.winstonLogger.verbose(message, { context });
+		if (this.isDev) {
+			super.verbose.apply(this, [message, context]);
+		} else {
+			this.winstonLogger.verbose(message, { context });
+		}
 	}
 }

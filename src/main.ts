@@ -5,7 +5,9 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { CustomLogger } from "./configuration/logger/logger.module";
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule, {
+		bufferLogs: true,
+	});
 	app.useLogger(app.get(CustomLogger));
 	const options = new DocumentBuilder()
 		.setTitle("UD Manager API")
@@ -25,4 +27,8 @@ async function bootstrap() {
 
 	await app.listen(3000);
 }
+
+process.on("unhandledRejection", (reason, promise) => {
+	console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
 bootstrap();
