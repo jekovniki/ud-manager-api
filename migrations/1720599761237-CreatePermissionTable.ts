@@ -20,12 +20,11 @@ export class CreatePermissionTable1720599761237 implements MigrationInterface {
 					{
 						name: "feature",
 						type: "varchar",
-						isUnique: true,
 					},
 					{
 						name: "permission",
 						type: "enum",
-						enum: ["READ", "WRITE", "CREATE", "DELETE", "UPDATE"],
+						enum: ["READ", "CREATE", "DELETE", "UPDATE"],
 					},
 				],
 			}),

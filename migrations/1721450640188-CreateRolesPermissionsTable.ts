@@ -12,7 +12,7 @@ export class CreateRolesPermissionsTable1721450640188
 		this.logger.log("UP - START");
 		await queryRunner.createTable(
 			new Table({
-				name: "role-permission",
+				name: "role_permission",
 				columns: [
 					{
 						name: "id",
@@ -38,7 +38,7 @@ export class CreateRolesPermissionsTable1721450640188
 
 	public async down(queryRunner: QueryRunner): Promise<void> {
 		this.logger.log("DOWN - START");
-		await queryRunner.dropTable("role-permission");
+		await queryRunner.dropTable("role_permission");
 		this.logger.log("DOWN - COMPLETED");
 	}
 }

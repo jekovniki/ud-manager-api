@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-type PermissionType = "READ" | "WRITE" | "CREATE" | "UPDATE" | "DELETE";
+type PermissionType = "READ" | "CREATE" | "UPDATE" | "DELETE";
 
 @Entity("permission")
 export class Permission {
@@ -12,7 +12,7 @@ export class Permission {
 
 	@Column({
 		type: "enum",
-		enum: ["READ", "WRITE", "CREATE", "DELETE", "UPDATE"],
+		enum: ["READ", "CREATE", "DELETE", "UPDATE"],
 	})
 	permission: PermissionType;
 
