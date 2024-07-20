@@ -1,17 +1,16 @@
 import {
 	Controller,
 	Get,
-	Body,
-	Patch,
 	Param,
 	Delete,
-	Put,
-	Post,
+	BadRequestException,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
-import { UpdateUserDto } from "./dto/update-user.dto";
-import { ApiBody, ApiTags } from "@nestjs/swagger";
+import { ApiTags } from "@nestjs/swagger";
 import { DeleteResult } from "typeorm";
+import { Permission } from "src/common/decorator/permission.decorator";
+import { User } from "src/common/decorator/user.decorator";
+import { RequestUserData } from "src/common/interface/server.interface";
 
 @ApiTags("User")
 @Controller({
@@ -20,30 +19,25 @@ import { DeleteResult } from "typeorm";
 })
 export class UserController {
 	constructor(private readonly usersService: UserService) {}
-	// @Get()
-	// findAll() {
-	// 	return this.usersService.findAll();
-	// }
 
-	/**
-	 * @TODO drop the id when jwt is implemented and make it with /me
-	 * @TODO add permissions
-	 */
-	@Get(":id")
-	findOne(@Param("id") id: string) {
-		return this.usersService.findOneById(id);
+	@Get("/me")
+	@Permission("user:READ")
+	public async findOne(@User() user: RequestUserData) {
+		const { password, refreshToken, ...data } =
+			await this.usersService.findOneById(user.id);
+
+		return data;
 	}
 
-	// @Patch(":id")
-	// update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-	// 	return this.usersService.update(+id, updateUserDto);
-	// }
-
-	/**
-	 * @TODO : Add permissions
-	 */
 	@Delete(":id")
-	async remove(@Param("id") id: string): Promise<DeleteResult> {
+	@Permission("user:DELETE")
+	public async remove(
+		@Param("id") id: string,
+		@User() user: RequestUserData,
+	): Promise<DeleteResult> {
+		if (id === user.id) {
+			throw new BadRequestException("You can't delete yourself");
+		}
 		await this.usersService.delete(id);
 		return;
 	}

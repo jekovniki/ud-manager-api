@@ -1,8 +1,9 @@
-import { ExecutionContext } from "@nestjs/common";
+import { ExecutionContext, Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Observable } from "rxjs";
 import { Reflector } from "@nestjs/core";
 
+@Injectable()
 export class AccessGuard extends AuthGuard("access") {
 	constructor(private reflector: Reflector) {
 		super();
