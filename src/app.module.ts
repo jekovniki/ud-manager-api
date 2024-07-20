@@ -6,12 +6,22 @@ import { UserModule } from "./features/user/user.module";
 import { ConfigurationModule } from "./configuration/configuration.module";
 import { PermissionModule } from "./features/permission/permission.module";
 import { RoleModule } from "./features/role/role.module";
+import { WinstonModule } from "nest-winston";
+import { LoggerConfig } from "./configuration/logger/logger.config";
+import { CustomLogger } from "./configuration/logger/logger.module";
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
 		}),
+		WinstonModule.forRoot(
+			new LoggerConfig()
+				.console({ level: "info" })
+				.file({ filename: "error.log", level: "error" })
+				.file({ filename: "combined.log" })
+				.getConfig(),
+		),
 		CompanyModule,
 		AuthModule,
 		UserModule,
@@ -19,5 +29,6 @@ import { RoleModule } from "./features/role/role.module";
 		PermissionModule,
 		RoleModule,
 	],
+	providers: [CustomLogger],
 })
 export class AppModule {}
