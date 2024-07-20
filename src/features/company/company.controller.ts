@@ -3,11 +3,11 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
 	Param,
 	UseInterceptors,
 	UploadedFile,
 	BadRequestException,
+	Put,
 } from "@nestjs/common";
 import { CompanyService } from "./company.service";
 import { CreateCompanyDto } from "./dto/create-company.dto";
@@ -55,7 +55,10 @@ export class CompanyController {
 		return this.companiesService.getAllUsers(user.companyId);
 	}
 
-	@Patch("/my")
+	/**
+	 * @todo : finish this. only name is updated rn.
+	 */
+	@Put("/my")
 	@Permission("company:UPDATE")
 	public async update(
 		@User() user: RequestUserData,
