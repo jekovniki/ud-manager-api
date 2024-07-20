@@ -5,7 +5,6 @@ import { UserService } from "../user/user.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../user/entities/user.entity";
 import { PassportModule } from "@nestjs/passport";
-import { LocalStrategy } from "./strategy/local.stategy";
 import { AccessTokenStrategy } from "./strategy/access-token.strategy";
 import { RefreshTokenStrategy } from "./strategy/refresh-token.strategy";
 import { JwtModule } from "@nestjs/jwt";
@@ -20,7 +19,6 @@ import { JwtModule } from "@nestjs/jwt";
 	providers: [
 		AuthService,
 		UserService,
-		LocalStrategy,
 		AccessTokenStrategy,
 		RefreshTokenStrategy,
 	],
