@@ -13,6 +13,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { PermissionGuard } from "./common/guard/permission.guard";
 import { AccessGuard } from "./common/guard/access.guard";
 import { FundModule } from "./features/fund/fund.module";
+import { ObligationModule } from "./features/obligation/obligation.module";
 
 @Module({
 	imports: [
@@ -22,8 +23,8 @@ import { FundModule } from "./features/fund/fund.module";
 		WinstonModule.forRoot(
 			new LoggerConfig()
 				.console({ level: "info" })
-				.file({ filename: "log/error.log", level: "error" })
-				.file({ filename: "log/combined.log" })
+				.file({ filename: "logs/error.log", level: "error" })
+				.file({ filename: "logs/combined.log" })
 				.getConfig(),
 		),
 		CompanyModule,
@@ -33,6 +34,7 @@ import { FundModule } from "./features/fund/fund.module";
 		PermissionModule,
 		RoleModule,
 		FundModule,
+		ObligationModule,
 	],
 	providers: [
 		{

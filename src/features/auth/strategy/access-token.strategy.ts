@@ -4,7 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { AccessTokenPayload } from "../interface/tokens.interface";
+import { AccessTokenPayload } from "../dto/tokens.interface";
 import { RequestUserData } from "src/common/interface/server.interface";
 
 @Injectable()
@@ -34,9 +34,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, "access") {
 	}
 
 	public async validate(req: Request): Promise<RequestUserData> {
-		const cookies = req.headers.cookie
-			? this.parseCookies(req.headers.cookie)
-			: {};
+		const cookies = req.headers.cookie ? this.parseCookies(req.headers.cookie) : {};
 
 		const token = cookies["at"];
 
@@ -45,12 +43,9 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, "access") {
 		}
 
 		try {
-			const payload: AccessTokenPayload = await this.jwtService.verifyAsync(
-				token,
-				{
-					secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
-				},
-			);
+			const payload: AccessTokenPayload = await this.jwtService.verifyAsync(token, {
+				secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
+			});
 
 			return {
 				id: payload.sub,

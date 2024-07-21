@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserService } from "../user/user.service";
-import { hashData, validateHash } from "../../utils";
+import { hashData, validateHash } from "./utils/hash.utils";
 import { ConfigService } from "@nestjs/config";
 import { AuthDto, CompleteUserRegistration } from "./dto/auth.dto";
 import { JwtService } from "@nestjs/jwt";
@@ -19,28 +19,16 @@ export class AuthService {
 			throw new BadRequestException("Wrong credentials");
 		}
 		if (!user.password) {
-			throw new BadRequestException(
-				"Please complete registration before you try to sign in",
-			);
+			throw new BadRequestException("Please complete registration before you try to sign in");
 		}
 
-		const isValidPassword = await validateHash(
-			credentials.password,
-			user.password,
-		);
+		const isValidPassword = await validateHash(credentials.password, user.password);
 		if (!isValidPassword) {
 			throw new BadRequestException("Wrong credentials");
 		}
 
-		const permissions = user.role.permissions.map(
-			(permission) => `${permission.feature}:${permission.permission}`,
-		);
-		const tokens = await this.getTokens(
-			user.id,
-			user.company.id,
-			user.role.name,
-			permissions,
-		);
+		const permissions = user.role.permissions.map((permission) => `${permission.feature}:${permission.permission}`);
+		const tokens = await this.getTokens(user.id, user.company.id, user.role.name, permissions);
 
 		await this.hashAndUpdateRefreshToken(user.id, tokens.refreshToken);
 
@@ -54,10 +42,7 @@ export class AuthService {
 		await this.userService.updateRefreshToken(userId, ""); // invalidates the refresh token
 	}
 
-	public async refreshTokens(
-		userId: string,
-		refreshToken: string,
-	): Promise<string> {
+	public async refreshTokens(userId: string, refreshToken: string): Promise<string> {
 		const user = await this.userService.findOneById(userId);
 		if (!user) {
 			throw new BadRequestException("User does not exist");
@@ -68,43 +53,22 @@ export class AuthService {
 			throw new BadRequestException("Invalid refresh token");
 		}
 		const userPermissions = this.getUserPermissionsArray(user.role.permissions);
-		const accessToken = this.generateAccessToken(
-			user.id,
-			user.company.id,
-			user.role.name,
-			userPermissions,
-		);
+		const accessToken = this.generateAccessToken(user.id, user.company.id, user.role.name, userPermissions);
 
 		return accessToken;
 	}
 
-	public async completeUserRegistration(
-		userRegistration: CompleteUserRegistration,
-	) {
-		await this.verifyRegistrationToken(
-			userRegistration.userId,
-			userRegistration.companyId,
-			userRegistration.refreshToken,
-		);
-		const password = await hashData(
-			userRegistration.password,
-			this.configService,
-		);
+	public async completeUserRegistration(userRegistration: CompleteUserRegistration) {
+		await this.verifyRegistrationToken(userRegistration.userId, userRegistration.companyId, userRegistration.refreshToken);
+		const password = await hashData(userRegistration.password, this.configService);
 
-		return await this.userService.completeRegistration(
-			userRegistration.userId,
-			{
-				...userRegistration,
-				password,
-			},
-		);
+		return await this.userService.completeRegistration(userRegistration.userId, {
+			...userRegistration,
+			password,
+		});
 	}
 
-	public async verifyRegistrationToken(
-		userId: string,
-		companyId: string,
-		registrationToken: string,
-	) {
+	public async verifyRegistrationToken(userId: string, companyId: string, registrationToken: string) {
 		const payload = await this.jwtService.verifyAsync(registrationToken, {
 			secret: this.configService.getOrThrow("REGISTRATION_TOKEN_SECRET"),
 		});
@@ -113,8 +77,7 @@ export class AuthService {
 			throw new BadRequestException("The used token is not for this user");
 		}
 
-		const storedToken =
-			await this.userService.findUserByToken(registrationToken);
+		const storedToken = await this.userService.findUserByToken(registrationToken);
 		if (!storedToken) {
 			throw new BadRequestException("User is already registered");
 		}
@@ -139,12 +102,7 @@ export class AuthService {
 		};
 	}
 
-	public async generateAccessToken(
-		userId: string,
-		companyId: string,
-		role: string,
-		permissions: string[],
-	): Promise<string> {
+	public async generateAccessToken(userId: string, companyId: string, role: string, permissions: string[]): Promise<string> {
 		return await this.jwtService.signAsync(
 			{
 				iss: this.configService.getOrThrow("APP_URL"),
@@ -160,10 +118,7 @@ export class AuthService {
 		);
 	}
 
-	public async generateRefreshToken(
-		userId: string,
-		companyId: string,
-	): Promise<string> {
+	public async generateRefreshToken(userId: string, companyId: string): Promise<string> {
 		return await this.jwtService.signAsync(
 			{
 				iss: this.configService.getOrThrow("APP_URL"),
@@ -178,9 +133,7 @@ export class AuthService {
 	}
 
 	private getUserPermissionsArray(permissions: Permission[]): string[] {
-		return permissions.map(
-			(permission) => `${permission.feature}:${permission.permission}`,
-		);
+		return permissions.map((permission) => `${permission.feature}:${permission.permission}`);
 	}
 
 	/*
@@ -189,10 +142,7 @@ export class AuthService {
 	 * and i felt this way it will be less problematic when I get back to this
 	 * peace of code at some point in the future
 	 */
-	public async hashAndUpdateRefreshToken(
-		userId: string,
-		refreshToken: string,
-	): Promise<string> {
+	public async hashAndUpdateRefreshToken(userId: string, refreshToken: string): Promise<string> {
 		const hash = await hashData(refreshToken, this.configService);
 		await this.userService.updateRefreshToken(userId, hash);
 

@@ -3,15 +3,12 @@ import { Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
-import { RefreshTokenPayload } from "../interface/tokens.interface";
+import { RefreshTokenPayload } from "../dto/tokens.interface";
 import { JwtService } from "@nestjs/jwt";
 import { RequestRefreshUserToken } from "src/common/interface/server.interface";
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(
-	Strategy,
-	"refresh",
-) {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, "refresh") {
 	private readonly configService: ConfigService;
 
 	constructor(
@@ -38,9 +35,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
 	}
 
 	public async validate(req: Request): Promise<RequestRefreshUserToken> {
-		const cookies = req.headers.cookie
-			? this.parseCookies(req.headers.cookie)
-			: {};
+		const cookies = req.headers.cookie ? this.parseCookies(req.headers.cookie) : {};
 
 		const token = cookies["rt"];
 
@@ -49,12 +44,9 @@ export class RefreshTokenStrategy extends PassportStrategy(
 		}
 
 		try {
-			const payload: RefreshTokenPayload = await this.jwtService.verifyAsync(
-				token,
-				{
-					secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
-				},
-			);
+			const payload: RefreshTokenPayload = await this.jwtService.verifyAsync(token, {
+				secret: this.configService.getOrThrow("ACCESS_TOKEN_SECRET"),
+			});
 
 			return {
 				id: payload.sub,
