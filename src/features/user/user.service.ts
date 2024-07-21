@@ -85,7 +85,6 @@ export class UserService {
 				firstName: user.firstName,
 				lastName: user.lastName,
 				position: user.position,
-				updatedAt: new Date(),
 			},
 		);
 	}
