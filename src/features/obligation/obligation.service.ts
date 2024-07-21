@@ -54,4 +54,15 @@ export class ObligationService {
 	public async remove(id: string): Promise<void> {
 		await this.obligationRepository.delete({ id });
 	}
+
+	public async updateStatus(id: string, status: ObligationStatus): Promise<void> {
+		await this.obligationRepository.update(
+			{
+				id,
+			},
+			{
+				status,
+			},
+		);
+	}
 }

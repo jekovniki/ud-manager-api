@@ -1,11 +1,17 @@
-import { Controller, Get, Post, Body, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, Delete, Patch } from "@nestjs/common";
 import { ObligationService } from "./obligation.service";
 import { CreateObligationDto } from "./dto/create-obligation.dto";
 import { Permission } from "src/common/decorator/permission.decorator";
 import { User } from "src/common/decorator/user.decorator";
 import { RequestUserData } from "src/common/interface/server.interface";
+import { ApiTags } from "@nestjs/swagger";
+import { UpdateObligationStatus } from "./dto/update-obligation-status.dto";
 
-@Controller("obligation")
+@ApiTags("Obligation")
+@Controller({
+	path: "obligation",
+	version: "1",
+})
 export class ObligationController {
 	constructor(private readonly obligationService: ObligationService) {}
 
@@ -33,25 +39,31 @@ export class ObligationController {
 	@Get("/company/incoming")
 	@Permission("obligation:READ")
 	public async getAllIncomingCompanyObligations(@User() user: RequestUserData) {
-		return this.obligationService.findAllCompanyObligations(user.companyId);
+		return this.obligationService.findAllIncomingCompanyObligations(user.companyId);
 	}
 
 	@Get("/fund/:fundId")
 	@Permission("obligation:READ")
 	public async getAllFundObligations(@Param("fundId") fundId: string) {
-		return this.obligationService.findAllCompanyObligations(fundId);
+		return this.obligationService.findAllFundObligations(fundId);
 	}
 
 	@Get("/fund/:fundId/incoming")
 	@Permission("obligation:READ")
 	public async getAllIncomingFundObligations(@Param("fundId") fundId: string) {
-		return this.obligationService.findAllCompanyObligations(fundId);
+		return this.obligationService.findAllIncomingFundObligations(fundId);
 	}
 
 	@Get(":id")
 	@Permission("obligation:READ")
 	public async get(@Param("id") id: string) {
 		return this.obligationService.findOneById(id);
+	}
+
+	@Patch(":id/status")
+	@Permission("obligation:UPDATE")
+	public async patch(@Param("id") id: string, @Body() update: UpdateObligationStatus) {
+		return this.obligationService.updateStatus(id, update.status);
 	}
 
 	@Delete(":id")

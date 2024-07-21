@@ -1,4 +1,4 @@
-import { IsString, IsUUID, IsEnum, IsDate, IsOptional } from "class-validator";
+import { IsString, IsUUID, IsEnum, IsOptional, IsDateString } from "class-validator";
 import { ObligationStatus } from "../utils/enum.utils";
 
 export class CreateObligationDto {
@@ -18,6 +18,6 @@ export class CreateObligationDto {
 	@IsEnum(ObligationStatus)
 	status: ObligationStatus;
 
-	@IsDate()
-	dueDate: Date;
+	@IsDateString()
+	dueDate: string;
 }
