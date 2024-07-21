@@ -13,6 +13,7 @@ import { APP_GUARD } from "@nestjs/core";
 import { PermissionGuard } from "./common/guard/permission.guard";
 import { AccessGuard } from "./common/guard/access.guard";
 import { FundModule } from "./features/fund/fund.module";
+import { ObligationModule } from "./features/obligation/obligation.module";
 
 @Module({
 	imports: [
@@ -33,6 +34,7 @@ import { FundModule } from "./features/fund/fund.module";
 		PermissionModule,
 		RoleModule,
 		FundModule,
+		ObligationModule,
 	],
 	providers: [
 		{
