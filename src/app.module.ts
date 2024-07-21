@@ -23,8 +23,8 @@ import { ObligationModule } from "./features/obligation/obligation.module";
 		WinstonModule.forRoot(
 			new LoggerConfig()
 				.console({ level: "info" })
-				.file({ filename: "log/error.log", level: "error" })
-				.file({ filename: "log/combined.log" })
+				.file({ filename: "logs/error.log", level: "error" })
+				.file({ filename: "logs/combined.log" })
 				.getConfig(),
 		),
 		CompanyModule,
