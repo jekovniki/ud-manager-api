@@ -3,13 +3,12 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
 	Param,
 	Delete,
+	BadRequestException,
 } from "@nestjs/common";
 import { FundService } from "./fund.service";
 import { CreateFundDto } from "./dto/create-fund.dto";
-import { UpdateFundDto } from "./dto/update-fund.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { Permission } from "src/common/decorator/permission.decorator";
 import { User } from "src/common/decorator/user.decorator";
@@ -25,22 +24,30 @@ export class FundController {
 
 	@Post()
 	@Permission("fund:CREATE")
-	create(@Body() createFundDto: CreateFundDto) {
+	create(@User() user: RequestUserData, @Body() createFundDto: CreateFundDto) {
+		if (createFundDto.companyId !== user.companyId) {
+			throw new BadRequestException("You don't have access to this company");
+		}
+
 		return this.fundService.create(createFundDto);
 	}
 
 	@Get(":id")
-	get(@Param("id") id: string, @User() user: RequestUserData) {
-		return this.fundService.findOne(+id);
+	@Permission("fund:READ")
+	get(@Param("id") id: string) {
+		return this.fundService.findOne(id);
 	}
 
-	@Patch(":id")
-	update(@Param("id") id: string, @Body() updateFundDto: UpdateFundDto) {
-		return this.fundService.update(+id, updateFundDto);
+	@Get("my/company")
+	@Permission("fund:READ")
+	getCompanyFunds(@User() user: RequestUserData) {
+		return this.fundService.findAllCompanyFunds(user.companyId);
 	}
 
 	@Delete(":id")
-	remove(@Param("id") id: string) {
-		return this.fundService.remove(+id);
+	@Permission("fund:DELETE")
+	public async remove(@Param("id") id: string) {
+		await this.fundService.remove(id);
+		return;
 	}
 }
