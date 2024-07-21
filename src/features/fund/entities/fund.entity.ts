@@ -1,29 +1,38 @@
 import {
-	Column,
-	CreateDateColumn,
 	Entity,
 	PrimaryGeneratedColumn,
+	Column,
+	ManyToOne,
+	JoinColumn,
+	Index,
+	CreateDateColumn,
 	UpdateDateColumn,
 } from "typeorm";
+import { Company } from "../../company/entities/company.entity";
 
-@Entity()
-export class Company {
+@Entity("fund")
+export class Fund {
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
 
 	@Column({ unique: true })
 	name: string;
 
-	@Column({ unique: true })
-	uic: string;
-
 	@Column()
-	logo: string;
+	description: string;
 
-	@Column({
-		type: "boolean",
-		default: true,
-	})
+	@Column({ unique: true })
+	bullstat: string;
+
+	@Column({ type: "uuid", name: "company_id" })
+	@Index("IDX_FUND_COMPANY_ID")
+	companyId: string;
+
+	@ManyToOne(() => Company)
+	@JoinColumn({ name: "company_id" })
+	company: Company;
+
+	@Column({ default: true })
 	active: boolean;
 
 	@CreateDateColumn({
@@ -39,8 +48,4 @@ export class Company {
 		default: () => "CURRENT_TIMESTAMP",
 	})
 	updatedAt: Date;
-
-	constructor(company: Partial<Company>) {
-		Object.assign(this, company);
-	}
 }

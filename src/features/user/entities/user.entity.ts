@@ -2,10 +2,12 @@ import { Company } from "src/features/company/entities/company.entity";
 import { Role } from "src/features/role/entities/role.entity";
 import {
 	Column,
+	CreateDateColumn,
 	Entity,
 	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
+	UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
@@ -39,17 +41,17 @@ export class User {
 	@JoinColumn({ name: "company_id" })
 	company: Company;
 
-	@Column({
-		type: "timestamptz",
-		default: new Date(),
+	@CreateDateColumn({
 		name: "created_at",
+		type: "timestamptz",
+		default: () => "CURRENT_TIMESTAMP",
 	})
 	createdAt: Date;
 
-	@Column({
-		type: "timestamptz",
-		default: new Date(),
+	@UpdateDateColumn({
 		name: "updated_at",
+		type: "timestamptz",
+		default: () => "CURRENT_TIMESTAMP",
 	})
 	updatedAt: Date;
 
