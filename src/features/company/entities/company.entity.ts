@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	PrimaryGeneratedColumn,
+	UpdateDateColumn,
+} from "typeorm";
 
 @Entity()
 export class Company {
@@ -20,18 +26,10 @@ export class Company {
 	})
 	active: boolean;
 
-	@Column({
-		type: "timestamptz",
-		default: new Date(),
-		name: "created_at",
-	})
+	@CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
 	createdAt: Date;
 
-	@Column({
-		type: "timestamptz",
-		default: new Date(),
-		name: "updated_at",
-	})
+	@UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
 	updatedAt: Date;
 
 	constructor(company: Partial<Company>) {
