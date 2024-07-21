@@ -24,9 +24,9 @@ export class Fund {
 	@Column({ unique: true })
 	bullstat: string;
 
-	@Column("uuid")
+	@Column({ type: "uuid", name: "company_id" })
 	@Index("IDX_FUND_COMPANY_ID")
-	company_id: string;
+	companyId: string;
 
 	@ManyToOne(() => Company)
 	@JoinColumn({ name: "company_id" })
@@ -35,9 +35,17 @@ export class Fund {
 	@Column({ default: true })
 	active: boolean;
 
-	@CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-	created_at: Date;
+	@CreateDateColumn({
+		name: "created_at",
+		type: "timestamptz",
+		default: () => "CURRENT_TIMESTAMP",
+	})
+	createdAt: Date;
 
-	@UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-	updated_at: Date;
+	@UpdateDateColumn({
+		name: "updated_at",
+		type: "timestamptz",
+		default: () => "CURRENT_TIMESTAMP",
+	})
+	updatedAt: Date;
 }

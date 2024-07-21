@@ -41,11 +41,19 @@ export class User {
 	@JoinColumn({ name: "company_id" })
 	company: Company;
 
-	@CreateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-	created_at: Date;
+	@CreateDateColumn({
+		name: "created_at",
+		type: "timestamptz",
+		default: () => "CURRENT_TIMESTAMP",
+	})
+	createdAt: Date;
 
-	@UpdateDateColumn({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
-	updated_at: Date;
+	@UpdateDateColumn({
+		name: "updated_at",
+		type: "timestamptz",
+		default: () => "CURRENT_TIMESTAMP",
+	})
+	updatedAt: Date;
 
 	constructor(user: Partial<User>) {
 		Object.assign(this, user);
