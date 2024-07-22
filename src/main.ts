@@ -8,6 +8,7 @@ import cookieParser = require("cookie-parser");
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
 		bufferLogs: true,
+		cors: true, // @todo : add variable
 	});
 	app.useLogger(app.get(CustomLogger));
 	const options = new DocumentBuilder()
