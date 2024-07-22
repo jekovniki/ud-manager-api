@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { AuthDto, CompleteUserRegistration } from "./dto/auth.dto";
 import { JwtService } from "@nestjs/jwt";
 import { Permission } from "../permission/entities/permission.entity";
+import { User } from "../user/entities/user.entity";
 
 @Injectable()
 export class AuthService {
@@ -59,30 +60,28 @@ export class AuthService {
 	}
 
 	public async completeUserRegistration(userRegistration: CompleteUserRegistration) {
-		await this.verifyRegistrationToken(userRegistration.userId, userRegistration.companyId, userRegistration.refreshToken);
+		const user = await this.verifyRegistrationToken(userRegistration.refreshToken);
 		const password = await hashData(userRegistration.password, this.configService);
 
-		return await this.userService.completeRegistration(userRegistration.userId, {
+		return await this.userService.completeRegistration(user.id, {
 			...userRegistration,
 			password,
 		});
 	}
 
-	public async verifyRegistrationToken(userId: string, companyId: string, registrationToken: string) {
-		const payload = await this.jwtService.verifyAsync(registrationToken, {
+	public async verifyRegistrationToken(registrationToken: string): Promise<User> {
+		await this.jwtService.verifyAsync(registrationToken, {
 			secret: this.configService.getOrThrow("REGISTRATION_TOKEN_SECRET"),
 		});
 
-		if (payload.sub !== userId || payload.cid !== companyId) {
-			throw new BadRequestException("The used token is not for this user");
-		}
-
-		const storedToken = await this.userService.findUserByToken(registrationToken);
-		if (!storedToken) {
+		const user = await this.userService.findUserByToken(registrationToken);
+		if (!user) {
 			throw new BadRequestException("User is already registered");
 		}
 
-		await this.userService.updateRefreshToken(userId, "");
+		await this.userService.updateRefreshToken(user.id, "");
+
+		return user;
 	}
 
 	public async getTokens(

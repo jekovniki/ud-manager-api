@@ -1,11 +1,4 @@
-import {
-	IsEmail,
-	IsNotEmpty,
-	IsString,
-	IsUUID,
-	MaxLength,
-	MinLength,
-} from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
 
 export class AuthDto {
 	@IsNotEmpty()
@@ -19,14 +12,6 @@ export class AuthDto {
 }
 
 export class CompleteUserRegistration extends AuthDto {
-	@IsUUID()
-	@IsNotEmpty()
-	userId: string;
-
-	@IsUUID()
-	@IsNotEmpty()
-	companyId: string;
-
 	@IsString()
 	@IsNotEmpty()
 	refreshToken: string;
