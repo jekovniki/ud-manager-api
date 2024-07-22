@@ -1,8 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import {
-	CreateCompanyDto,
-	CreateCompanyEmployeesDto,
-} from "./dto/create-company.dto";
+import { CreateCompanyDto, CreateCompanyEmployeesDto } from "./dto/create-company.dto";
 import { UpdateCompanyDto } from "./dto/update-company.dto";
 import { EntityManager, Repository } from "typeorm";
 import { Company } from "./entities/company.entity";
@@ -29,58 +26,36 @@ export class CompanyService {
 		private readonly userService: UserService,
 	) {}
 
-	async create(
-		createCompanyDto: CreateCompanyDto,
-	): Promise<{ company: Company; employees: string[] }> {
+	async create(createCompanyDto: CreateCompanyDto): Promise<{ company: Company; employees: string[] }> {
 		const { name, uic, employees } = createCompanyDto;
 
-		return await this.entityManager.transaction(
-			async (transactionalEntityManager) => {
-				const company = await transactionalEntityManager.save(
-					new Company({ name, uic, logo: "" }),
-				);
+		return await this.entityManager.transaction(async (transactionalEntityManager) => {
+			const company = await transactionalEntityManager.save(new Company({ name, uic, logo: "" }));
 
-				await Promise.all(
-					employees.map((employee) =>
-						this.assignEmployeeToCompany(
-							transactionalEntityManager,
-							employee,
-							company,
-						),
-					),
-				);
+			await Promise.all(employees.map((employee) => this.assignEmployeeToCompany(transactionalEntityManager, employee, company)));
 
-				return {
-					company,
-					employees: employees.map((employee) => employee.email),
-				};
-			},
-		);
+			return {
+				company,
+				employees: employees.map((employee) => employee.email),
+			};
+		});
 	}
 
 	public async addUserToCompany(companyId: string, employee: CreateUserDto) {
-		return await this.entityManager.transaction(
-			async (transactionalEntityManager) => {
-				const company = await this.companyRepository.findOneBy({
-					id: companyId,
-				});
+		return await this.entityManager.transaction(async (transactionalEntityManager) => {
+			const company = await this.companyRepository.findOneBy({
+				id: companyId,
+			});
 
-				await this.assignEmployeeToCompany(
-					transactionalEntityManager,
-					employee,
-					company,
-				);
-			},
-		);
+			await this.assignEmployeeToCompany(transactionalEntityManager, employee, company);
+		});
 	}
 
 	public async findOne(id: string) {
 		return this.companyRepository.findOneBy({ id });
 	}
 
-	public async getAllUsers(
-		id: string,
-	): Promise<Omit<User, "password" | "refreshToken">[]> {
+	public async getAllUsers(id: string): Promise<Omit<User, "password" | "refreshToken">[]> {
 		return this.userService.getAllCompanyUsers(id);
 	}
 
@@ -125,17 +100,12 @@ export class CompanyService {
 			throw new Error(`Role with ID ${employee.roleId} not found`);
 		}
 
-		const result = await this.userService.create(
-			transactionalEntityManager,
-			company,
-			role,
-			employee.email,
-		);
+		const result = await this.userService.create(transactionalEntityManager, company, role, employee.email);
 
 		this.mailService.sendRegistrationMail(
 			employee.email,
 			company.name,
-			`${this.configService.getOrThrow("APP_URL")}/?email=${employee.email}&userId=${result.id}&companyId=${result.company.id}&rt=${result.registrationToken}`,
+			`${this.configService.getOrThrow("APP_URL")}/?email=${employee.email}&rt=${result.registrationToken}`,
 		);
 	}
 }
