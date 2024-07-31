@@ -1,21 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { MailerService } from "@nestjs-modules/mailer";
-import { join } from "path";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class EmailService {
-	private readonly companyEmail = "";
+	constructor(
+		private readonly mailService: MailerService,
+		private readonly configService: ConfigService,
+	) {}
 
-	constructor(private readonly mailService: MailerService) {}
-
-	public async sendRegistrationMail(
-		to: string,
-		companyName: string,
-		registrationLink: string,
-	) {
-		console.log("Template name:", "registration");
+	public async sendRegistrationMail(to: string, companyName: string, registrationLink: string) {
 		await this.mailService.sendMail({
-			from: this.companyEmail,
+			from: this.configService.getOrThrow("EMAIL_USERNAME"),
 			to,
 			subject: "AMC Manager | Регистрация",
 			template: "registration", // This should match the name of your template file without the extension

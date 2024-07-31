@@ -35,6 +35,9 @@ export class AuthService {
 
 		return {
 			tokens,
+			firstName: user.firstName,
+			lastName: user.lastName,
+			email: user.email,
 			role: user.role,
 		};
 	}
